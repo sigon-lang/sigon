@@ -5,6 +5,6 @@ from sensors.DefaultSensor import DefaultSensor
 agent = AgentDefinition('example.on')
 agent.run()
 
-read_rensor = DefaultSensor('defaultSensor')
-read_rensor.perceive("start")
+read_sensor = DefaultSensor('defaultSensor')
+read_sensor.perceive("start")
 
