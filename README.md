@@ -10,6 +10,16 @@ It is a generic and extensible tool that allows modeling agents according to exi
 pip install -r requirements.txt
 ```
 
+## Contributing 
 
 
+### With development
+
+1. Creating a fork from master
+2. Making and Submitting Changes
+3. Submit a pull request to the repository
+
+### With ideas
+
+1. Creating an issue
 
