@@ -7,11 +7,7 @@ It is a generic and extensible tool that allows modeling agents according to exi
 
 
 ```
-pip install pyswip
-
-pip install pypubsub
-
-pip install 'antlr4-python3-runtime==4.9'
+pip install -r requirements.txt
 ```
 
 
