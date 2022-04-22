@@ -1,0 +1,1 @@
+from sigonAgent import AgentDefinition
