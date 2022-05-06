@@ -1,5 +1,5 @@
-from sigonAgent import AgentDefinition
-from sensors.DefaultSensor import DefaultSensor
+from sigon.sigonAgent import AgentDefinition
+from sigon.sensors.DefaultSensor import DefaultSensor
 
 
 agent = AgentDefinition('example.on')
