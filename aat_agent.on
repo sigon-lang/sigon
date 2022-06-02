@@ -1,0 +1,45 @@
+communication:
+    sensor("readMessage", "sensors.ReadMessage"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+    workingHours(2).    
+    experience(softwareDeveloper).
+    experience(teamManager).
+    ageGroup(young).
+    yearsOfExperience(softwareDeveloper, 4).
+    yearsOfExperience(teamManager, 0).
+    jobDistance(3).
+    salary(12000) :- workingHours(8).
+    has(car).
+    
+desires:
+    busyDailyHours(10).
+    distanceFromWork(5). //wants to work close to its home
+
+intentions:
+    negotiateContract.
+
+_negotiation:    
+//    urgencia(tem(carro), 1).
+//    urgencia(cargaHoraria(8), 10).
+//    urgencia(cargo(programador), 10).
+//    urgencia(cargo(gerenteDeEquipe), 9).
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+// considerar o tempo para desenvolver a NN
+
+
+! _negotiation urgency(has, car, 1) :- desires workDistance(5) & beliefs jobDistance(X < 5).
+
+! _negotiation urgency(workingHours, 8, 10) :- desires busyDailyHours(10) & beliefs busyDailyHours(2).
+
+! _negotiation urgency(position, X, 10) :- beliefs experience(X) & beliefs yearsOfExperience(X, Y > 2).
+
+! _negotiation urgency(position, X, 9) :- beliefs experience(X) & beliefs yearsOfExperience(X, Y < 2).
+
+! _negotiation urgency(salary, X, 10) :- beliefs salary(X > 12000) & beliefs position(softwareDeveloper).
+
+//urgency(has(car)) dá erro
