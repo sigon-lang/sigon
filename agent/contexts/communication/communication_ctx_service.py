@@ -42,12 +42,13 @@ class CommunicationContextService(ContextService):
         if fact.find('(') == -1:
             sensor_name = fact            
         else:
-            sensor_name = fact[0:fact.index('(')]            
+            sensor_name = fact[0:fact.index('(')]       
+            variable =  fact[fact.index('(')+1:fact.index(')')]    
         
         for sensor in cls.sensors:
             if sensor_name == sensor.name:
-                # return sensor.verify(factVerify) #NOTE aqui nao pega o valor certo
-                return cls.verify_implementation
+                return sensor.verify(variable) #NOTE aqui nao pega o valor certo
+                #return cls.verify_implementation # invocar a funcao de verify - opcao 2
         
         return PrologService.verify(fact, cls.ctx_name) #NOTE: eu poderia jogar a implementacao do verify e add dentro do sensor
         

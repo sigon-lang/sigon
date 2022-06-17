@@ -1,0 +1,38 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("defaultActuator", "actuators.DefaultActuator").
+
+beliefs:
+    workingHours(2).    
+    experience(softwareDeveloper).
+    experience(teamManager).
+    ageGroup(young).
+    yearsOfExperience(softwareDeveloper, 4).
+    yearsOfExperience(teamManager, 0).
+    jobDistance(3).
+    salary(12000) :- workingHours(8).
+    has(car).
+    
+desires:
+    busyDailyHours(10).
+    distanceFromWork(5). //wants to work close to its home
+
+intentions:
+    negotiateContract.
+
+_negotiation:    
+//used to define the avg salary 
+//    urgencia(tem(carro), 1).
+//    urgencia(cargaHoraria(8), 10).
+//    urgencia(cargo(programador), 10).
+//    urgencia(cargo(gerenteDeEquipe), 9).
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+// considerar o tempo para desenvolver a NN
+
+
+//! _negotiation urgency(has, car, 1) :- _neuralNetwork avgSalary(X) & beliefs jobDistance(X < 5).
+//considerar a BR com dois níveis: nível 1: cada contexto resolve como retornar o verify; nível 2: nível simbólico.
+! _negotiation X :- communication contractSensor(X).

@@ -25,14 +25,15 @@ import threading
 class Agent:
     ctxs = {} #dic com o nome dos ctxs e suas referencias
     sensors = []
+    received_sensors = []
     actuators = []
-    def __init__(self, custom_ctxs = []): #metodo dummy só para testes
+    def __init__(self, custom_ctxs = [], sensors = []): #metodo dummy só para testes
         self.ctxs[BeliefsContextService.ctx_name] = BeliefsContextService
         self.ctxs[DesiresContextService.ctx_name] = DesiresContextService
         self.ctxs[IntentionsContextService.ctx_name] = IntentionsContextService
         self.ctxs[PlansContextService.ctx_name] = PlansContextService
         self.ctxs[CommunicationContextService.ctx_name] = CommunicationContextService
-
+        self.received_sensors = sensors
         for custom_ctx in custom_ctxs:
             self.ctxs[custom_ctx.ctx_name] = custom_ctx
         
@@ -77,12 +78,17 @@ class Agent:
             sensor_implementation = lang_sensor.implementation.split('.')
             sensor_implementation_module = sensor_implementation[0]
             class_name = sensor_implementation[1]
-            sensor_implementation = importlib.find_loader(sensor_implementation_module)
-            if sensor_implementation is not None:
-                mod = __import__(lang_sensor.implementation, fromlist=[class_name])
-                Sensor = getattr(mod, class_name)                
-                s = Sensor(name=lang_sensor.identifier)
-                self.sensors.append(s) #TODO: é feito um append de um sensor que nao executou o perceive
+            # NOTE: poderia usar um dict para obter de forma rapida o sensor
+            for rcv_sensor in self.received_sensors:
+                if rcv_sensor.name == lang_sensor.identifier:
+                    self.sensors.append(rcv_sensor)
+            # sensor_implementation = importlib.find_loader(sensor_implementation_module)
+            # if sensor_implementation is not None:
+
+                # mod = __import__(lang_sensor.implementation, fromlist=[class_name])
+                # Sensor = getattr(mod, class_name)                
+                # s = Sensor(name=lang_sensor.identifier)
+                # self.sensors.append(s) #TODO: é feito um append de um sensor que nao executou o perceive
 
         for lang_actuator in walker.lang_actuators:
             # assert isinstance(langActuator, LangActuator)                    

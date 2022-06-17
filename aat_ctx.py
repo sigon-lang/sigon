@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import pickle
+import json
 
 
 class AATCtx(ContextService):
@@ -51,6 +52,7 @@ class AATCtx(ContextService):
 
     @classmethod
     def append_fact(self, fact) -> bool:
+        fact = json.loads(fact)
         self.check_keys(fact)
         self.data.update(fact)  
         entry = pd.DataFrame([self.data])

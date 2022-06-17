@@ -13,7 +13,7 @@ from mcs.bridge_rules import *
 
 class AgentDefinition:
 
-    def __init__(self, file: str, contexts = [], encoding='utf-8'):
+    def __init__(self, file: str, contexts = [], sensors = [], encoding='utf-8'):
         input_stream = FileStream(
         file, encoding=encoding)
         lexer = AgentLexer(input_stream)
@@ -25,7 +25,7 @@ class AgentDefinition:
         walker = ParseTreeWalker()
 
         walker.walk(self.agent_walker, tree)
-        self.agent = Agent(custom_ctxs=contexts)        
+        self.agent = Agent(custom_ctxs=contexts, sensors=sensors)        
 
     def run(self):
         self.agent.run(self.agent_walker)    
