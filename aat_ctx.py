@@ -3,15 +3,18 @@ import torch
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import pickle
 
 
 class AATCtx(ContextService):
 
-    _instance = None
+    _instance = None    
     avg_salary = 0.0
     # Load model
-    model = torch.jit.load('sigon/regressorv1-f.pt')
-
+    model = torch.jit.load('sigon/regressorv4-f.pt')
+    with open('sigon/encoder', 'rb') as f:
+            enc = pickle.load(f)
+    
     data = {
         'Rating': 3.4,
         'Size': '10000+ employees',
@@ -32,9 +35,11 @@ class AATCtx(ContextService):
         'job_simp': 'data scientist',
         'seniority': 'na'
     }
-
+    @classmethod
     def __new__(cls):
         cls.model.eval()
+        with open('sigon/encoder', 'rb') as f:
+            cls.enc = pickle.load(f)
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -47,14 +52,14 @@ class AATCtx(ContextService):
     @classmethod
     def append_fact(self, fact) -> bool:
         self.check_keys(fact)
-        self.data.update(fact)
-        # get dummy data
-        df_dum = pd.get_dummies(self.data)
-        X = df_dum.drop('avg_salary', axis=1)
-        X_torch = torch.tensor(np.array(X), dtype=torch.float)
-        avg_salary_result = self.model.forward(X_torch)
-        print(self.model.forward(X_torch))
-        self.avg_salary = avg_salary_result[0]
+        self.data.update(fact)  
+        entry = pd.DataFrame([self.data])
+        encoded_entry = self.enc.transform(entry).toarray()
+
+        entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
+        formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
+        self.avg_salary = self.model.forward(formated_entry).item()
+        
         return True
 
     @classmethod
