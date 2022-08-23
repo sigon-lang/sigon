@@ -6,7 +6,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import pickle
-from aat_ctx import AATCtx
+from nn_ctx import NNCtx
+from negotiation_ctx import NegotiationCtx
 import json
 
 aux = {'python_yn': 0,
@@ -18,10 +19,13 @@ aux = {'python_yn': 0,
        'teste': 2
        }
 
-AATCtx.ctx_name = 'negotiation'
+NNCtx.ctx_name = '_nn'
+
+NegotiationCtx.ctx_name = '_negotiation'
 
 ctxs = []
-ctxs.append(AATCtx)
+ctxs.append(NNCtx)
+ctxs.append(NegotiationCtx)
 
 read_sensor = ContractSensor('contractSensor')
 

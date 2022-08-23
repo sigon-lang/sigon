@@ -35,6 +35,7 @@ class Agent:
         self.ctxs[CommunicationContextService.ctx_name] = CommunicationContextService
         self.received_sensors = sensors
         for custom_ctx in custom_ctxs:
+            custom_ctx.ctx_name = custom_ctx.ctx_name.replace('_', '')
             self.ctxs[custom_ctx.ctx_name] = custom_ctx
         
 

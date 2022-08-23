@@ -77,10 +77,10 @@ class AgentWalker(AgentListener):
         pre_condition = {}
         for cond in ctx.planConditions().condition():
             # NOTE: I replaced '_' to avoid problems with prolog parsing
-            currentContext = cond.contextReference().getText().replace('_', '')
+            current_context = cond.contextReference().getText().replace('_', '')
 
-            pre_condition.setdefault(currentContext, [])
-            pre_condition[currentContext].append(
+            pre_condition.setdefault(current_context, [])
+            pre_condition[current_context].append(
                 cond.conditionTerm().getText())
 
         self.plan.preconditions = pre_condition
@@ -134,7 +134,8 @@ class AgentWalker(AgentListener):
         current_body_rule_term = BodyTerm()
 
         current_body_rule_term.negation = True if ctx.negation() is not None else False
-        current_body_rule_term.ctx_name = ctx.contextName().getText()
+        current_body_rule_term.ctx_name = ctx.contextName().getText().replace(
+            '_', '')  # replace to avoid problems with prolog parsing
         # NOTE: I think here we should have spĺit with & and |
         current_body_rule_term.terms = ctx.bodyTerm().getText()
         self.last_body.body_terms.append(current_body_rule_term)

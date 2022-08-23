@@ -43,3 +43,6 @@ planner:
 ! _negotiation urgency(salary, X, 10) :- beliefs salary(X > 12000) & beliefs position(softwareDeveloper).
 
 //urgency(has(car)) dá erro
+
+
+//
