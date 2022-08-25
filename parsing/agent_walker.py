@@ -52,7 +52,7 @@ class AgentWalker(AgentListener):
 
     def enterSensorImplementation(self, ctx: AgentParser.SensorImplementationContext):
         self.last_sensor.implementation = ctx.getText().replace('\"', '')
-        self.lang_sensors.append(self.last_sensor)
+        self.lang_sensors.append(LangSensor(self.last_sensor.identifier, self.last_sensor.implementation))
         return super().enterSensorImplementation(ctx)
 
     def enterLogicalContext(self, ctx: AgentParser.LogicalContextContext):
