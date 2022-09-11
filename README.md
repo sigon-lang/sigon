@@ -10,6 +10,13 @@ It is a generic and extensible tool that allows modeling agents according to exi
 pip install -r requirements.txt
 ```
 
+
+## Implementation details
+
+Each sensor is responsible for defining how each data can be used during the reasoning cycle. A sensor's implementation must:
+1. Define how data is transformed to perception (add method);
+2. How the perception can be verified during bridge-rules execution (verify method).
+
 ## Contributing 
 
 

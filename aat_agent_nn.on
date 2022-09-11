@@ -24,6 +24,7 @@ intentions:
 //defines the avg salary based on the sensors input
 _nn:    
 
+//implements AAT based on different context's information
 _negotiation:    
 //used to define the avg salary 
 //    urgencia(tem(carro), 1).

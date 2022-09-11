@@ -25,14 +25,12 @@ class BeliefsContextService(ContextService):
         return cls._instance
 
     @classmethod
-    def verify(cls, fact):    
-        #print(Operations.verify(queryAux, test1))  
+    def verify(cls, fact):            
         return PrologService.verify_custom(fact, cls.ctx_name)
         
 
     @classmethod
-    def remove(cls, fact):
-        #Operations.retract(retract, father("john", "bob"), t
+    def remove(cls, fact):        
         return PrologService.retract(fact, cls.ctx_name)
 
     @classmethod

@@ -16,8 +16,7 @@ class Head:
 
    
 
-    def append_facts(self):       
-        
+    def append_facts(self):               
        for variable in self.bindings:
             #obter keys de variable
             current_clause = self.clause
@@ -27,7 +26,7 @@ class Head:
                 if type(variable.get(key)) is str:
                     current_clause = current_clause.replace(key, variable.get(key))
                 else:
-                    # print('iterar sobre a lista e obter valores') #TODO: iterar sobre a lista e obter valores
+                    #TODO: iterar sobre a lista e obter valores
                     current_clause = variable.get(key)
 
             self.ctx.append_fact(current_clause)
