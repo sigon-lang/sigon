@@ -7,7 +7,7 @@ from agent.contexts.communication.sensor import Sensor
 from pyswip.prolog import *
 from prolog.prolog_service import PrologService
 from mcs.contexts.ctx_service import ContextService
-
+import re
 
 
 class CommunicationContextService(ContextService):
@@ -43,7 +43,10 @@ class CommunicationContextService(ContextService):
             sensor_name = fact            
         else:
             sensor_name = fact[0:fact.index('(')]       
-            variable =  fact[fact.index('(')+1:fact.index(')')]    
+            # variable =  fact[fact.index('(')+1:fact.index(')')] 
+            # variable = re.findall('\(.*?\)', fact)[fact.index('(')]
+            # NOTE: these solution does not considered that inlined parenthesis can be used during reasoning
+            variable = fact[fact.find('(')+1:fact.rfind(')')] 
         
         for sensor in cls.sensors:
             if sensor_name == sensor.name:

@@ -26,13 +26,15 @@ class Body:
         for body_term in self.body_terms:
             # assert isinstance(bodyTerm, BodyTerm)
             ctx = ctxs[body_term.ctx_name]
+            # NOTE: each verify must return a list containing dicts with variable and its results
+            # [{fact: 'verifyResult'}]
             # vai retornar um dict com os bindings {'X': 'aware', 'Y': 'notifyPedestrian'} [{fact: 'resultadoVerify'}]
-            result = ctx.verify(body_term.terms)
+            binding_results = ctx.verify(body_term.terms)
             # TODO: colocar regras de or, and -> converter para bool
             # TODO: verificar se já não existe um binding, exemplo: X -> aux, aí na proxima iteração, X -> aux2
             # TODO: ir montando string de resultados
-            for r in result:
-                self.head.bindings.append(r)
+            for variable_value_dict in binding_results:
+                self.head.bindings.append(variable_value_dict)
 
         #self.head.bindings = results
         return bool(self.head.bindings)

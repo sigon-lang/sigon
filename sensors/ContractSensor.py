@@ -56,8 +56,10 @@ class ContractSensor(Sensor):
     def verify(self, fact): #NOTE aqui poderia fazer um parsing para conter varios facts
         # TODO: reescrever para adequar ao novo formato
         print(self.contract_options)
-        if len(str(self.contract_options)) > 0:            
-            return [{fact: PrologService.verify_custom(fact, self.name)}]
+        if len(str(self.contract_options)) > 0:     
+            result = PrologService.verify_custom(fact, self.name)
+            print(result)                   
+            return result #['X': ['a', 'b', 'c']]
         
         return []
    
