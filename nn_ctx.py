@@ -5,6 +5,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import pickle
 import json
+import math
+import decimal
 
 
 class NNCtx(ContextService):
@@ -47,8 +49,18 @@ class NNCtx(ContextService):
 
     @classmethod
     def verify(self, fact):  # Checks the detected avg_salary
+        print(fact)
+        if 'greater' in fact:
+            value = fact[fact.find('(')+1:fact.rfind(')')]    
+            result = float(self.avg_salary) - float(value)   
+            if result > 0.0:       
+                return [{fact: self.avg_salary}]            
+        elif 'avgSalary' in fact:
+            value = fact[fact.find('(')+1:fact.rfind(')')]    
+            return [{fact: self.avg_salary}]   
+        return []
 
-        return [{fact: self.avg_salary}]
+
 
     @classmethod
     def append_fact(self, fact) -> bool:
@@ -60,7 +72,7 @@ class NNCtx(ContextService):
 
         entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
         formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
-        self.avg_salary = self.model.forward(formated_entry).item()
+        self.avg_salary = self.model.forward(formated_entry).item()*1000
         
         return True
 

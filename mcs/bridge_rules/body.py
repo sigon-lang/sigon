@@ -22,21 +22,23 @@ class Body:
 
     # NOTE: preciso verificar cada BR como um todo, ideia é montar uma string de verificacao -> inserir numa lista o retorno booleano
     def verify_custom(self, ctxs):
-
-        for body_term in self.body_terms:
-            # assert isinstance(bodyTerm, BodyTerm)
+        bindings = []
+        boolean_operators = []
+        for body_term in self.body_terms:            
             ctx = ctxs[body_term.ctx_name]
             # NOTE: each verify must return a list containing dicts with variable and its results
             # [{fact: 'verifyResult'}]
-            # vai retornar um dict com os bindings {'X': 'aware', 'Y': 'notifyPedestrian'} [{fact: 'resultadoVerify'}]
+            # {'X': 'aware', 'Y': 'notifyPedestrian'} [{fact: 'verifyResults'}]
             binding_results = ctx.verify(body_term.terms)
-            # TODO: colocar regras de or, and -> converter para bool
-            # TODO: verificar se já não existe um binding, exemplo: X -> aux, aí na proxima iteração, X -> aux2
-            # TODO: ir montando string de resultados
-            for variable_value_dict in binding_results:
-                self.head.bindings.append(variable_value_dict)
+            boolean_operators.append(bool(binding_results))
+            # TODO: create boolean logics for the bridge rules bindings  operator — Standard operators as functions
 
-        #self.head.bindings = results
+            # TODO: check if existing binding: X -> aux, next iteration X-> aux2                        
+            for variable_value_dict in binding_results: 
+                bindings.append(variable_value_dict)
+                #self.head.bindings.append(variable_value_dict)
+
+        self.head.bindings = bindings # TODO: develop bool operators
         return bool(self.head.bindings)
 
     def verify(self):

@@ -17,6 +17,7 @@ beliefs:
 desires:
     busyDailyHours(10).
     distanceFromWork(5). //wants to work close to its home
+    job(programmer).
 
 intentions:
     negotiateContract.
@@ -40,7 +41,11 @@ planner:
 
 //! _negotiation urgency(has, car, 1) :- _neuralNetwork avgSalary(X) & beliefs jobDistance(X < 5).
 //considerar a BR com dois níveis: nível 1: cada contexto resolve como retornar o verify; nível 2: nível simbólico.
-! beliefs X :- communication contractSensor(X).
-! _nn X :- communication cvSensor(X).
 
-! _negotiation urgency(salary, X, 10) :- _nn avg(X > 12000) & beliefs position(softwareDeveloper).
+! beliefs X :- communication contractSensor(X). // does not accept adding things with () - right side of bridge rule
+! _nn X :- communication cvSensor(X).
+! beliefs avgSalary(X) :- nn avgSalary(X).
+
+
+! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000) & beliefs jobDescription(programmer) & desires job(programmer).
+! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer).

@@ -22,7 +22,7 @@ class BridgeRule:
     def execute_custom(self, ctxs): #esse metodo é todo errado, não deveria ser assim!!!
         assert isinstance(self.body, Body)
         self.body.head = self.head
-        if self.body.verify_custom(ctxs):
+        if self.body.verify_custom(ctxs): 
             self.head.append_facts()
         
 

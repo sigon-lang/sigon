@@ -5,6 +5,7 @@ from mcs.contexts.ctx_service import ContextService
 class NegotiationCtx(ContextService):
 
     _instance = None    
+    urgencies = []
     # Load model
     
     @classmethod
@@ -20,6 +21,8 @@ class NegotiationCtx(ContextService):
 
     @classmethod
     def append_fact(self, fact) -> bool: # NOTE: what this context will append?
+        print(fact)
+        self.urgencies.append(fact)
        
         return True
 
