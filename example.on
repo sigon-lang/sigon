@@ -1,5 +1,5 @@
 communication:
-    sensor("defaultSensor", "sensors.DefaultSensor").
+	sensor("defaultSensor", "sensors.DefaultSensor").
 	actuator("defaultActuator", "actuators.DefaultActuator").
 
 beliefs:
@@ -11,6 +11,5 @@ desires:
 intentions:
 	somethingToBeTrue.
     
-planner:	
-	//plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+planner:		
 	plan(somethingToBeTrue,[action(defaultActuator(helloWorld))],[beliefs:helloWorld],[beliefs:perception]).
