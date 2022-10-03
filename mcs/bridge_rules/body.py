@@ -20,6 +20,11 @@ class Body:
     def to_string(self):
         return '\n'.join(self.body_terms)
 
+    def create_bool_expression(self, expressions):
+
+
+        return bool(eval(' '.join(str(exp) for exp in expressions)))
+
     # NOTE: preciso verificar cada BR como um todo, ideia é montar uma string de verificacao -> inserir numa lista o retorno booleano
     def verify_custom(self, ctxs):
         bindings = []
@@ -30,15 +35,23 @@ class Body:
             # [{fact: 'verifyResult'}]
             # {'X': 'aware', 'Y': 'notifyPedestrian'} [{fact: 'verifyResults'}]
             binding_results = ctx.verify(body_term.terms)
-            boolean_operators.append(bool(binding_results))
-            # TODO: create boolean logics for the bridge rules bindings  operator — Standard operators as functions
+            if body_term.negation: # NOTE: do we have to user xor?
+                boolean_operators.append('not')
+            if body_term.operator == ',':
+                boolean_operators.append('and') 
+            elif body_term.operator == '|':
+                boolean_operators.append('or')     
+            boolean_operators.append(bool(binding_results))    
 
             # TODO: check if existing binding: X -> aux, next iteration X-> aux2                        
             for variable_value_dict in binding_results: 
                 bindings.append(variable_value_dict)
                 #self.head.bindings.append(variable_value_dict)
 
-        self.head.bindings = bindings # TODO: develop bool operators
+        # TODO: develop bool operators
+        if self.create_bool_expression(boolean_operators):
+            self.head.bindings = bindings 
+        
         return bool(self.head.bindings)
 
     def verify(self):
