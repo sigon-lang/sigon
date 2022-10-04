@@ -44,12 +44,10 @@ class Body:
             boolean_operators.append(bool(binding_results))    
 
             # TODO: check if existing binding: X -> aux, next iteration X-> aux2                        
-            for variable_value_dict in binding_results: 
+            for variable_value_dict in binding_results:                
                 bindings.append(variable_value_dict)
-                #self.head.bindings.append(variable_value_dict)
-
-        # TODO: develop bool operators
-        if self.create_bool_expression(boolean_operators):
+                
+        if bool(eval(' '.join(str(exp) for exp in boolean_operators))):
             self.head.bindings = bindings 
         
         return bool(self.head.bindings)
