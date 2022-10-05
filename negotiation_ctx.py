@@ -1,5 +1,6 @@
 from mcs.contexts.ctx_service import ContextService
 import re
+from prolog.prolog_service import PrologService
 
 # this class will handle the AAT part of the reasoning cycle
 
@@ -17,8 +18,7 @@ class NegotiationCtx(ContextService):
 
     @classmethod
     def verify(self, fact):  # what this context will verify?
-
-        return [{fact: True}]
+        return PrologService.verify_custom(fact, self.ctx_name)             
 
     @classmethod
     def append_fact(self, fact) -> bool: # NOTE: what this context will append?
@@ -28,8 +28,8 @@ class NegotiationCtx(ContextService):
         # I could format fact in a dict
         if 'urgency' in str(fact): # ugly workaround
             self.urgencies.append(fact)
-
-        return True
+            PrologService.append_fact(fact, self.ctx_name)
+        
 
     @classmethod
     def add_initial_fact(self, fact) -> bool:
@@ -37,9 +37,13 @@ class NegotiationCtx(ContextService):
 
     @classmethod
     def find_urgency(self, fact) -> str:
-        numbers = re.findall('[0-9]+', fact)
+        number = re.findall('[0-9]+', fact)
         for urgencies in self.urgencies:
             urgency_value = re.findall('[0-9]+', urgencies)
+            if urgency_value == number:
+                return urgencies
+
+        return ''                
 
 
 

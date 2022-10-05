@@ -44,8 +44,9 @@ planner:
 
 ! beliefs X :- communication contractSensor(X). // does not accept adding things with () - right side of bridge rule
 ! _nn X :- communication cvSensor(X).
-! beliefs avgSalary(X) :- nn avgSalary(X).
+// ! beliefs avgSalary(X) :- nn avgSalary(X).
 
 
 ! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000) & beliefs jobDescription(programmer) & desires job(programmer).
 ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer).
+// ! _negotiation urgency(salary, 7000, 10) :- beliefs jobDescription(programmer) & desires job(programmer). 
