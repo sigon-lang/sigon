@@ -44,7 +44,7 @@ read_sensor = ContractSensor('contractSensor')
 cv_sensor = CVSensor('cvSensor')
 
 
-agent = AgentDefinition('sigon/aat_agent_nn.on', ctxs,
+agent = AgentDefinition('sigon/aat_agent_nn_salary.on', ctxs,
                         [read_sensor, cv_sensor])
 agent.run()
 

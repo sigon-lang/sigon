@@ -5,10 +5,10 @@ communication:
 
 beliefs:
     workingHours(2).    
-    experience(programmer).
+    experience(softwareDeveloper).
     experience(teamManager).
     ageGroup(young).
-    yearsOfExperience(programmer, 3).
+    yearsOfExperience(softwareDeveloper, 4).
     yearsOfExperience(teamManager, 0).
     jobDistance(3).
     salary(12000) :- workingHours(8).
@@ -27,7 +27,6 @@ _nn:
 
 //implements AAT based on different context's information
 _negotiation:    
-    teste.
 //used to define the avg salary 
 //    urgencia(tem(carro), 1).
 //    urgencia(cargaHoraria(8), 10).
@@ -48,17 +47,11 @@ planner:
 // ! beliefs avgSalary(X) :- nn avgSalary(X).
 
 
-! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000) & beliefs jobDescription(programmer) & desires job(programmer). // OK
-! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer). // OK
+// ! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000) & beliefs jobDescription(programmer) & desires job(programmer).
+// ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer).
 // ! _negotiation urgency(salary, 7000, 10) :- beliefs jobDescription(programmer) & desires job(programmer). 
 
 
-// ! _negotiation urgency(has, car, 1) :- desires distanceFromWork(5) & beliefs jobDistance(3). //OK
+! _negotiation urgency(has, car, 1) :- beliefs jobDistance(X) & beliefs X < 5. //evitando usar comparacoes pois nao funcionam nessa versao
 
-// ! _negotiation urgency(workingHours, 8, 10) :- desires busyDailyHours(10) & beliefs busyDailyHours(2).
 
-// ! _negotiation urgency(position, X, 10) :- beliefs experience(X) & beliefs yearsOfExperience(X, 3). //OK
-
-// ! _negotiation urgency(position, X, 9) :- beliefs experience(X) & beliefs yearsOfExperience(X, 1).
-
-// ! _negotiation urgency(salary, X, 10) :- beliefs salary(X > 12000) & beliefs position(softwareDeveloper). this was replaced by the one with nn

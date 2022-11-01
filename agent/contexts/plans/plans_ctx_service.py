@@ -47,7 +47,7 @@ class PlansContextService (ContextService):
             # pegar pC e consultar no contexto
             terms = plan.preconditions[pC]
             for t in terms:
-                if t.startswith('not '):
+                if t.startswith('not '):                    
                     cls.bindings.extend(
                         cls.ctxs[pC].verify(t.replace('not', '')))
                     if bool(cls.bindings):
@@ -133,7 +133,7 @@ class PlansContextService (ContextService):
                     for action in action_bindings:
                         act = 'act(' + a.name + '(' + action + '))'
                         PlansContextService.append_fact(act)
-                        CommunicationContextService.append_fact(act)
+                        CommunicationContextService.append_fact(a.name + '(' + action + ')')
 
                     # actions = ['act(' + a.name +'('+ ','.join(map(str, action_bindings)) + '))']
                     # args_size = 1

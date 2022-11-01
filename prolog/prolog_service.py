@@ -35,7 +35,7 @@ class PrologService():
             print('Error while querying base', fact, module)
             print(e)
             return False
-
+    # TODO: refact sigon to handle comparison operators
     def verify_custom(fact, module):
         try:
             query_result = PrologService.prolog.query(
@@ -45,7 +45,7 @@ class PrologService():
         except PrologError as e:
             # print('Error while querying base', fact, module)
             # print(e)
-            return False
+            return []
 
     def retract(fact, module):
         currentFact = fact
@@ -78,5 +78,6 @@ class PrologService():
             return (head + ":-" + body)
         return fact.join([ctx+'(', ')'])
 
+    
     # def addInitialFact(fact, module):
     #     PrologService.prolog.assertz(fact)
