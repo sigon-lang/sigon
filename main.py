@@ -44,11 +44,11 @@ read_sensor = ContractSensor('contractSensor')
 cv_sensor = CVSensor('cvSensor')
 
 
-agent = AgentDefinition('sigon/aat_agent_nn_salary.on', ctxs,
+agent = AgentDefinition('sigon/aat_agent_salary_2.on', ctxs,
                         [read_sensor, cv_sensor])
 agent.run()
 
-cv_sensor.perceive(json.dumps(cv_data))
+# cv_sensor.perceive(json.dumps(cv_data))
 
 read_sensor.perceive(json.dumps(job_contract))
 

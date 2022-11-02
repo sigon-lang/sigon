@@ -32,8 +32,8 @@ _negotiation:
 planner:
     plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
 
-! beliefs X :- communication contractSensor(X). 
-! _nn X :- communication cvSensor(X).
+! beliefs X :- communication contractSensor(X). //devo deixar isso negativo
+! _nn X :- communication cvSensor(X). //devo deixar isso negativo - OK
 
 ! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000) & beliefs jobDescription(programmer) & desires job(programmer). 
 ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(projectManager) & desires job(projectManager). 

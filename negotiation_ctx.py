@@ -22,13 +22,15 @@ class NegotiationCtx(ContextService):
 
     @classmethod
     def append_fact(self, fact) -> bool: # NOTE: what this context will append?
-        print(fact)
+        
         # greater(84000) 
         # 86668.31970214844 - adding this is wrong - TODO: check!
         # I could format fact in a dict
         if 'urgency' in str(fact): # ugly workaround
-            self.urgencies.append(fact)
-            PrologService.append_fact(fact, self.ctx_name)
+            if fact not in self.urgencies:
+                print(fact)
+                self.urgencies.append(fact)  # ALWAYS ADD NEW FACT EVEN IF THIS FACT ALREADY EXISTS
+                PrologService.append_fact(fact, self.ctx_name)
         
 
     @classmethod

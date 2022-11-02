@@ -1,6 +1,6 @@
 communication:
     sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
-	actuator("defaultActuator", "actuators.DefaultActuator").
+	actuator("sendMessage", "actuators.SendMessage").
 
 beliefs:
     workingHours(2).    
@@ -17,6 +17,7 @@ desires:
     busyDailyHours(10).
     distanceFromWork(5). //wants to work close to its home
     job(programmer).
+    salary(7000).
 
 intentions:
     negotiateContract.
@@ -25,9 +26,9 @@ planner:
     plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
 
 ! beliefs X :- communication contractSensor(X). 
-! _nn X :- communication cvSensor(X).
+// ! _nn X :- communication cvSensor(X).
 
-! _negotiation urgency(salary, 12000, 10) :- beliefs salary(12000) & beliefs position(softwareDeveloper).
+//! _negotiation urgency(salary, 12000, 10) :- beliefs salary(12000) & beliefs position(softwareDeveloper).
 
 ! _negotiation urgency(salary, 7000, 10) :- desires salary(7000) & beliefs jobDescription(programmer) & desires job(programmer). 
 ! _negotiation urgency(salary, 12000, 10) :- desires salary(12000) & beliefs jobDescription(projectManager) & desires job(projectManager). 

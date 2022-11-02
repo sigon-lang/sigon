@@ -23,6 +23,8 @@ class CVSensor(Sensor):
     def verify(self, fact): #NOTE aqui poderia fazer um parsing para conter varios facts
         print(self.contract_options)
         if len(str(self.contract_options)) > 0:            
-            return [{fact: self.contract_options}]
+            contract_options = self.contract_options
+            self.contract_options = ''
+            return [{fact: contract_options}]
         
         return []

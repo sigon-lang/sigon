@@ -133,7 +133,7 @@ class PlansContextService (ContextService):
                     for action in action_bindings:
                         act = 'act(' + a.name + '(' + action + '))'
                         PlansContextService.append_fact(act)
-                        CommunicationContextService.append_fact(a.name + '(' + action + ')')
+                        # CommunicationContextService.append_fact(a.name + '(' + action + ')')
 
                     # actions = ['act(' + a.name +'('+ ','.join(map(str, action_bindings)) + '))']
                     # args_size = 1
