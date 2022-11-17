@@ -58,8 +58,12 @@ class NNCtx(ContextService):
         elif 'avgSalary' in fact:
             value = fact[fact.find('(')+1:fact.rfind(')')]    
             return [{fact: self.avg_salary}]   
+        else:
+            auxiliary = fact[0:fact.find('(')]
+            variable = fact[fact.find('(')+1:fact.find(')')]
+            if auxiliary in self.data:
+                return [{variable: self.data[auxiliary]}]                        
         return []
-
 
 
     @classmethod
