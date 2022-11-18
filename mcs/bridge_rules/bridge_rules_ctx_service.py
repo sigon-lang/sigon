@@ -18,7 +18,8 @@ class BridgeRulesContextService():
             assert isinstance(br, BridgeRule)          
             br.head.ctx = cls.ctxs[br.head.ctxName]
             br.head.bindings = [] #talvez aqui tenha o bug da inicializacao
-            print("Result of BR",  br.head.ctx, br.execute_custom(cls.ctxs))
+            br.execute_custom(cls.ctxs)
+            #print("Result of BR",  br.head.ctx, br.execute_custom(cls.ctxs))
 
     @classmethod
     def execute_BDI_rules(cls):

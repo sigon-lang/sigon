@@ -161,7 +161,8 @@ class PlansContextService (ContextService):
                     communication_head.ctx = cls.ctxs['communication']
                     body = Body(head=communication_head, terms=body_terms)
                     br = BridgeRule(communication_head, body)
-                    print(br.execute())
+                    br.execute()
+                    # print(br.execute())
 
     # @classmethod
     # def action_predicate(cls, action): #usada no filtro do algoritmo de planejamento
@@ -199,13 +200,13 @@ class PlansContextService (ContextService):
             if bool(p.posconditions):
                 poscondition_formatted = cls.format_plan_conditions(
                     p.posconditions.items())
-                print(poscondition_formatted)
+                # print(poscondition_formatted)
             else:
                 poscondition_formatted = '_'
 
             plan_to_be_added = 'plan(' + p.something_to_be_true + ',_,' + \
                 precondition_formatted + ',' + poscondition_formatted + ')'
-            print(plan_to_be_added)
+            # print(plan_to_be_added)
             # TODO: pq nao estou considerando a acao aqui?
             PlansContextService.append_fact(plan_to_be_added)
         # circundar as preconds com o nome do contexto e AND

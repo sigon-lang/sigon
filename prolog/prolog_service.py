@@ -12,8 +12,8 @@ class PrologService():
             query_result = PrologService.prolog.query(facts, catcherrors=True)
             return list(query_result)
         except PrologError as e:
-            print('Error while querying base', facts)
-            print(e)
+            # print('Error while querying base', facts)
+            # print(e)
             return []
 
     def verify_body_terms(facts):
@@ -21,8 +21,8 @@ class PrologService():
             query_result = PrologService.prolog.query(facts, catcherrors=True)
             return bool(list(query_result))
         except PrologError as e:
-            print('Error while querying base', facts)
-            print(e)
+            # print('Error while querying base', facts)
+            # print(e)
             return False
 
     def verify(fact, module):
@@ -32,8 +32,8 @@ class PrologService():
             return bool(list(query_result))
 
         except PrologError as e:
-            print('Error while querying base', fact, module)
-            print(e)
+            # print('Error while querying base', fact, module)
+            # print(e)
             return False
     # TODO: refact sigon to handle comparison operators
     def verify_custom(fact, module):

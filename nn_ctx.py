@@ -49,15 +49,15 @@ class NNCtx(ContextService):
 
     @classmethod
     def verify(self, fact):  # Checks the detected avg_salary
-        print(fact)
+        # print(fact)
         if 'greater' in fact:
             value = fact[fact.find('(')+1:fact.rfind(')')]    
             result = float(self.avg_salary) - float(value)   
             if result > 0.0:       
-                return [{fact: self.avg_salary}]            
+                return [{}]            
         elif 'avgSalary' in fact:
             value = fact[fact.find('(')+1:fact.rfind(')')]    
-            return [{fact: self.avg_salary}]   
+            return [{}]   
         else:
             auxiliary = fact[0:fact.find('(')]
             variable = fact[fact.find('(')+1:fact.find(')')]
@@ -94,3 +94,7 @@ class NNCtx(ContextService):
         for key in keys_to_remove:
             del fact[key]                
 
+
+    @classmethod
+    def reset(cls):
+        cls._instance = None

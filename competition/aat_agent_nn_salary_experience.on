@@ -1,0 +1,50 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+    sensor("cvSensor", "sensors.CVSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+    workingHours(2).    
+    //experience(specialist).
+    //experience(senior).
+    //experience(midLevel).
+    //experience(junior).
+
+    experience(teamManager).
+    ageGroup(young).
+    yearsOfExperience(programmer, 3).
+    yearsOfExperience(teamManager, 0).
+    jobDistance(3).
+    salary(12000) :- workingHours(8).
+    has(car).
+// Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;    
+desires:
+    busyDailyHours(10).
+    distanceFromWork(5). //wants to work close to its home
+    job(programmer).
+
+intentions:
+    negotiateContract.
+
+//defines the avg salary based on the sensors input
+_nn:    
+
+//implements AAT based on different context's information
+_negotiation:    
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+! beliefs X :- communication contractSensor(X). //devo deixar isso negativo
+! _nn X :- communication cvSensor(X). //devo deixar isso negativo - OK
+
+! beliefs experience(X) :- _nn seniority(X). 
+
+! _negotiation urgency(salary, 2000, 10) :- _nn greater(24000) & beliefs experience(junior). 
+! _negotiation urgency(salary, 2500, 10) :- _nn greater(30000) & beliefs experience(midLevel). 
+! _negotiation urgency(salary, 3000, 10) :- _nn greater(36000) & beliefs experience(senior). 
+! _negotiation urgency(salary, 4000, 10) :- _nn greater(48000) & beliefs experience(specialist). 
+
+
+
+ // ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer). 

@@ -27,7 +27,7 @@ class ContractSensor(Sensor):
                 predicate = key + '(' + str(option) + ')'
                 PrologService.append_fact(predicate, self.name)
                 # CommunicationContextService.append_fact(predicate)
-        print(self.contract_options)
+        # print(self.contract_options)
         # CommunicationContextService.verify_implementation.append({'contractSensor': args[0]})
         
     # def add(self, *args):
@@ -55,10 +55,10 @@ class ContractSensor(Sensor):
     # aqui só posso mandar a variável
     def verify(self, fact): #NOTE aqui poderia fazer um parsing para conter varios facts
         # TODO: reescrever para adequar ao novo formato
-        print(self.contract_options)
+        # print(self.contract_options)
         if len(str(self.contract_options)) > 0:     
             result = PrologService.verify_custom(fact, self.name)
-            print(result)                   
+            # print(result)                   
             return result #['X': ['a', 'b', 'c']]
         
         return []

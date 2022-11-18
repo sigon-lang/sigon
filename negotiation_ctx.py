@@ -28,7 +28,7 @@ class NegotiationCtx(ContextService):
         # I could format fact in a dict
         if 'urgency' in str(fact): # ugly workaround
             if fact not in self.urgencies:
-                print(fact)
+                # print(fact)
                 self.urgencies.append(fact)  # ALWAYS ADD NEW FACT EVEN IF THIS FACT ALREADY EXISTS
                 PrologService.append_fact(fact, self.ctx_name)
         

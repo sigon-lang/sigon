@@ -1,0 +1,36 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+    sensor("cvSensor", "sensors.CVSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+
+
+// Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;    
+desires:
+
+intentions:
+    negotiateContract.
+
+//defines the avg salary based on the sensors input
+_nn:    
+
+//implements AAT based on different context's information
+_negotiation:    
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+! beliefs X :- communication contractSensor(X). //devo deixar isso negativo
+! _nn X :- communication cvSensor(X). //devo deixar isso negativo - OK
+
+
+! _negotiation urgency(salary, 7000, 10) :- _nn greater(84000). 
+! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000). 
+
+
+
+
+
+
+ // ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer). 

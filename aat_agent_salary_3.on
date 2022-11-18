@@ -1,0 +1,42 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+    workingHours(2).    
+    experience(programmer).
+    experience(teamManager).
+    ageGroup(young).
+    jobDescription(programmer).
+    yearsOfExperience(programmer, 3).
+    yearsOfExperience(teamManager, 0).
+    jobDistance(3).
+    salary(12000) :- workingHours(8).
+    has(car).
+    experience(senior).
+// Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;    
+desires:
+    busyDailyHours(10).
+    distanceFromWork(5). //wants to work close to its home
+    job(programmer).
+    salary(4000).
+
+intentions:
+    negotiateContract.
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+! beliefs X :- communication contractSensor(X). 
+// ! _nn X :- communication cvSensor(X).
+
+//! _negotiation urgency(salary, 12000, 10) :- beliefs salary(12000) & beliefs position(softwareDeveloper).
+//! _negotiation urgency(salary, 2500, 10) :- desires salary(2500) & beliefs experience(programmer) & desires job(programmer). 
+//! _negotiation urgency(salary, 3000, 10) :- desires salary(3000) & beliefs experience(programmer) & desires job(programmer). 
+//! _negotiation urgency(salary, 3500, 10) :- desires salary(3000) & beliefs experience(projectManager) & desires job(projectManager). 
+//! _negotiation urgency(salary, 4000, 10) :- desires salary(4000) & beliefs experience(projectManager) & desires job(projectManager). 
+
+! _negotiation urgency(salary, 2000, 10) :- beliefs experience(junior) & desires job(programmer). 
+! _negotiation urgency(salary, 2500, 10) :- beliefs experience(midLevel) & desires job(programmer). 
+! _negotiation urgency(salary, 3000, 10) :- beliefs experience(senior) & desires job(programmer). 
+! _negotiation urgency(salary, 4000, 10) :- beliefs experience(specialist) & desires job(programmer). 
