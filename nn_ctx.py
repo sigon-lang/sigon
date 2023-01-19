@@ -50,19 +50,13 @@ class NNCtx(ContextService):
     @classmethod
     def verify(self, fact):  # Checks the detected avg_salary
         # print(fact)
-        if 'greater' in fact:
-            value = fact[fact.find('(')+1:fact.rfind(')')]    
-            result = float(self.avg_salary) - float(value)   
-            if result > 0.0:       
-                return [{}]            
-        elif 'avgSalary' in fact:
-            value = fact[fact.find('(')+1:fact.rfind(')')]    
-            return [{}]   
-        else:
-            auxiliary = fact[0:fact.find('(')]
-            variable = fact[fact.find('(')+1:fact.find(')')]
-            if auxiliary in self.data:
-                return [{variable: self.data[auxiliary]}]                        
+      
+        auxiliary = fact[0:fact.find('(')]
+        variable = fact[fact.find('(')+1:fact.find(')')]
+        if auxiliary in self.data:
+            return [{variable: self.data[auxiliary]}]
+        elif 'avgSalary' in fact and self.avg_salary > 0.0:
+            return [{fact: 'avgSalary({})'.format(self.avg_salary)}]                        
         return []
 
 
@@ -76,7 +70,7 @@ class NNCtx(ContextService):
 
         entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
         formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
-        self.avg_salary = self.model.forward(formated_entry).item()*1000
+        self.avg_salary = (self.model.forward(formated_entry).item()*1000)/12
         
         return True
 

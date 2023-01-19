@@ -6,12 +6,20 @@ from nn_ctx import NNCtx
 from negotiation_ctx import NegotiationCtx
 import json
 import time
+# from memory_profiler import profile
 
 
+# Description
+
+# Initial evalutation for setup 1- salary definition
+# Compare time to execute - 21 executions - excluding the first one - reason: modules loading time
+# files to be tested: aat_agent_nn_salary_v2_sem_experiencia x aat_agent_salary_2
+
+# @profile
 def execute():
     job_contract = {
         # Salary: The possible values are (a) \$7,000, (b) \$12,000, or (c) \$20,000; - changed to year
-        "salary": [84000, 144000, 240000],
+        "salary": [7000, 12000, 20000],
         # Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;
         "jobDescription": ["qa", "programmer", "teamManager", "projectManager"],
         # (a) providing a leased company car, (b) no leased car, or (c) no agreement;
@@ -57,32 +65,28 @@ def execute():
 
     read_sensor = ContractSensor('contractSensor')
 
-    cv_sensor = CVSensor('cvSensor')
+    cv_sensor = CVSensor('cvSensor')   
 
-    # agent = AgentDefinition('sigon/aat_agent_nn_salary.on', ctxs,
-    #                         [read_sensor, cv_sensor])
-
-    agent = AgentDefinition('sigon/aat_agent_nn_salary_v2_sem_experiencia.on', ctxs,
+    agent = AgentDefinition('sigon/experiment1_agents/aat_agent_nn_salary_v2_sem_experiencia_ARTIGO.on', ctxs,
                             [read_sensor, cv_sensor])
-
     
     agent.run()    
 
     read_sensor.perceive(json.dumps(job_contract))
     cv_sensor.perceive(json.dumps(cv_data))
+
+    
     
 
 
-number_executions = 10
+number_executions = 1
 times = []
 for i in range(number_executions):
     start_time = time.time()
     execute()
     result = time.time() - start_time
-    print("Iteration %d - %s " % (i, result))
-    times.append(result)
-    NNCtx._instance = None
-    NegotiationCtx._instance = None
+    #print("Iteration %d - %s " % (i, result))
+    times.append(result)   
 
 
 print(times)
