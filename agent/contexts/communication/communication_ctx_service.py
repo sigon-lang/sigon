@@ -17,6 +17,7 @@ class CommunicationContextService(ContextService):
     sensors = []
     ctx_name = 'communication'
     verify_implementation = []
+    
 
     @classmethod
     def get_theory(cls):
@@ -67,7 +68,8 @@ class CommunicationContextService(ContextService):
             i = fact.index('(')
             name = fact[0: i]
 
-            actuators = list(filter((lambda a: a.name == name), cls.actuators))
+            actuators = list(filter((lambda a: a.name == name), cls.actuators))            
+            
             if actuators:
                 actuator = actuators[0]
                 arg = fact[i + 1: len(fact)-1]

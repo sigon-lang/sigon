@@ -62,4 +62,7 @@ class ContractSensor(Sensor):
             return result #['X': ['a', 'b', 'c']]
         
         return []
+
+    def clear_data(self):
+        self.contract_options = ''
    

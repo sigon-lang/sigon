@@ -27,9 +27,8 @@ planner:
     ).
 //rules responsible to create new perceptions from different knowledge sources
 ! beliefs X :- communication contractSensor(X).
+! _negotiation X :- communication contractSensor(X).
+
 ! _nn X :- communication cvSensor(X). 
-
-! _negotiation X :- beliefs X.
-
 ! _negotiation avgSalary(X) :- _nn avgSalary(X).   
 

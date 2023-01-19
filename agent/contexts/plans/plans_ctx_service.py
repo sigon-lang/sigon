@@ -131,8 +131,8 @@ class PlansContextService (ContextService):
                     # não é muito bom, complexidade muito alta, porém, como na minha tese esse não era meu foco
                     # acabei por ignorar e usar essa versão
                     for action in action_bindings:
-                        act = 'act(' + a.name + '(' + action + '))'
-                        PlansContextService.append_fact(act)
+                        act = 'act(' + a.name + '(' + action + '))'                        
+                        PlansContextService.append_fact(act) #NOTE é aqui o gargalo
                         # CommunicationContextService.append_fact(a.name + '(' + action + ')')
 
                     # actions = ['act(' + a.name +'('+ ','.join(map(str, action_bindings)) + '))']
@@ -162,6 +162,7 @@ class PlansContextService (ContextService):
                     body = Body(head=communication_head, terms=body_terms)
                     br = BridgeRule(communication_head, body)
                     br.execute()
+                    cls.bindings = []
                     # print(br.execute())
 
     # @classmethod
@@ -216,7 +217,8 @@ class PlansContextService (ContextService):
 
     @classmethod
     def append_fact(cls, fact):
-        PrologService.append_fact(fact, cls.ctx_name)
+        if not PrologService.verify(fact, cls.ctx_name):
+            PrologService.append_fact(fact, cls.ctx_name)
 
     # @classmethod
     # def addBeliefs(cls, facts): #acho que esse metodo nao rola mais, pq mudou muito a maneira como trata a string

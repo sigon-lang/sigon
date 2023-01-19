@@ -22,7 +22,9 @@ class NegotiationCtx(ContextService):
 
     @classmethod
     def verify(self, fact):  
-        return PrologService.verify_custom(fact, self.ctx_name)             
+        # r = PrologService.verify_custom(fact, self.ctx_name)
+        # print("tamanho do verify", len(r))
+        return PrologService.verify_custom(fact, self.ctx_name)
 
     @classmethod
     def update_urgency(self, fact):
@@ -38,8 +40,11 @@ class NegotiationCtx(ContextService):
                     min_value = current_value
                     current_salary = self.salaries[i]
 
-            defined_urgency = 'urgency(salary, {}, {})'.format(current_salary, self.urgency_level)        
-            PrologService.append_fact(defined_urgency, self.ctx_name)
+            defined_urgency = 'urgency(salary, {}, {})'.format(current_salary, self.urgency_level)
+            if defined_urgency not in self.urgencies:
+                self.urgencies.append(defined_urgency)
+                #if not PrologService.verify_custom(defined_urgency, self.ctx_name):        
+                PrologService.append_fact(defined_urgency, self.ctx_name)
 
         
 
@@ -53,6 +58,7 @@ class NegotiationCtx(ContextService):
         
         if 'salary(' in fact:
             value = fact[fact.find('(')+1: fact.find(')')]
+            #if value not in self.salaries:
             self.salaries.append(value)
         # todo vez que adicionar algo, posso dar update na urgencia
         # greater(84000) 

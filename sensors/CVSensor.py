@@ -28,3 +28,6 @@ class CVSensor(Sensor):
             return [{fact: contract_options}]
         
         return []
+
+    def clear_data(self):
+        self.contract_options = ''
