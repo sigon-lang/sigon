@@ -17,6 +17,7 @@ class CVSensor(Sensor):
     def add(self, *args):     
         # acho que nao é assim o correto
         self.contract_options = args[0]
+        #print(self.contract_options)
         # print(self.contract_options)
         # CommunicationContextService.verify_implementation.append({'contractSensor': args[0]})
 
@@ -24,7 +25,7 @@ class CVSensor(Sensor):
         # print(self.contract_options)
         if len(str(self.contract_options)) > 0:            
             contract_options = self.contract_options
-            self.contract_options = ''
+            #self.contract_options = ''
             return [{fact: contract_options}]
         
         return []

@@ -9,7 +9,6 @@ import time
 from prolog.prolog_service import PrologService
 # from memory_profiler import profile
 
-
 # Description
 
 # Initial evalutation for setup 1- salary definition
@@ -57,7 +56,6 @@ cv_data = {'python_yn': 1,
 
 # @profile
 def execute():
-
     NNCtx.ctx_name = '_nn'
 
     NegotiationCtx.ctx_name = '_negotiation'
@@ -76,10 +74,14 @@ def execute():
 
     agent.run()
 
+    cv_sensor.perceive(json.dumps(cv_data))
+    
+
     read_sensor.perceive(json.dumps(job_contract))
     read_sensor.clear_data()
-    cv_sensor.perceive(json.dumps(cv_data))
-    cv_sensor.clear_data()
+
+   
+    
 
 
 # def process_data():
@@ -97,7 +99,7 @@ def main():
         start_time = time.time()
         execute()
         result = time.time() - start_time        
-        times.append(result)
+        times.append(result*1000)
 
     print(times)
 

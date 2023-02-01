@@ -56,7 +56,7 @@ cv_data = {'python_yn': 1,
            }
 
 # @profile
-def execute():
+def execute():    
 
     NNCtx.ctx_name = '_nn'
 
@@ -69,17 +69,19 @@ def execute():
 
     read_sensor = ContractSensor('contractSensor')
 
-    cv_sensor = CVSensor('cvSensor')
+    # cv_sensor = CVSensor('cvSensor')
 
-    agent = AgentDefinition('sigon/experiment1_agents_v2/aat_agent_nn_salary_v2_sem_experiencia_ARTIGO.on', ctxs,
-                            [read_sensor, cv_sensor])
+    agent = AgentDefinition('sigon/experiment1_agents_v2/aat_agent_salary_2.on', ctxs,
+                            [read_sensor])
 
     agent.run()
 
     read_sensor.perceive(json.dumps(job_contract))
-    read_sensor.clear_data()
-    cv_sensor.perceive(json.dumps(cv_data))
-    cv_sensor.clear_data()
+    read_sensor.clear_data()    
+
+
+    # cv_sensor.perceive(json.dumps(cv_data))
+    # cv_sensor.clear_data()
 
 
 # def process_data():
@@ -97,7 +99,7 @@ def main():
         start_time = time.time()
         execute()
         result = time.time() - start_time        
-        times.append(result)
+        times.append(result*1000)
 
     print(times)
 

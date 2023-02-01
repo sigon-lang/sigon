@@ -7,7 +7,7 @@ import pickle
 import json
 import math
 import decimal
-
+import time
 
 class NNCtx(ContextService):
 
@@ -30,8 +30,8 @@ class NNCtx(ContextService):
         'employer_provided': 0,
         'job_state': 'MD',
         'same_state': 0,
-        'age': 36,
-        'python_yn': 1,
+        'age': 20,
+        'python_yn': 0,
         'spark': 0,
         'aws': 0,
         'excel': 0,
@@ -40,16 +40,17 @@ class NNCtx(ContextService):
     }
     @classmethod
     def __new__(cls):
+        
         cls.model.eval()
         with open('sigon/encoder', 'rb') as f:
             cls.enc = pickle.load(f)
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+        
         return cls._instance
 
     @classmethod
     def verify(self, fact):  # Checks the detected avg_salary
-        # print(fact)
       
         auxiliary = fact[0:fact.find('(')]
         variable = fact[fact.find('(')+1:fact.find(')')]
@@ -62,6 +63,7 @@ class NNCtx(ContextService):
 
     @classmethod
     def append_fact(self, fact) -> bool:
+        #start_time = time.time()        
         fact = json.loads(fact)
         self.check_keys(fact)
         self.data.update(fact)  
@@ -71,6 +73,7 @@ class NNCtx(ContextService):
         entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
         formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
         self.avg_salary = (self.model.forward(formated_entry).item()*1000)/12
+        #print("tempo da nn {}".format(time.time() - start_time))
         
         return True
 

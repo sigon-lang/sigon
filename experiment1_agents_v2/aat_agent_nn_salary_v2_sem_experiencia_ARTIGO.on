@@ -1,0 +1,34 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor").
+    sensor("cvSensor", "sensors.CVSensor").
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+    workingHours(2).
+
+desires:
+
+intentions:
+    negotiateContract.
+
+//defines the avg salary based on the sensors input
+_nn:    
+
+
+//implements AAT based on different information
+_negotiation:    
+
+planner:
+    plan(
+        negotiateContract,
+        [action(sendMessage(X,Y))],
+        [_negotiation:urgency(X, Y, 10)],
+        [beliefs:propose]
+    ).
+//rules responsible to create new perceptions from different knowledge sources
+! beliefs X :- communication contractSensor(X).
+! _negotiation X :- communication contractSensor(X).
+
+! _nn X :- communication cvSensor(X). 
+! _negotiation avgSalary(X) :- _nn avgSalary(X).   
+

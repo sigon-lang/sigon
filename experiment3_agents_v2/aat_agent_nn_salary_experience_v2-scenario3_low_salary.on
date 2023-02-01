@@ -1,0 +1,58 @@
+communication:
+    sensor("contractSensor", "sensors.ContractSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+    sensor("cvSensor", "sensors.CVSensor"). 	//nome do sensor e implementacao do sensor //Ideia - ler arquivo e gerar implementacao
+	actuator("sendMessage", "actuators.SendMessage").
+
+beliefs:
+    workingHours(2).    
+    jobDistance(10).        
+    
+// Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;    
+desires:
+    busyDailyHours(12).
+    workDistance(near). //wants to work close to its home
+    job(programmer).
+
+intentions:
+    negotiateContract.
+
+//defines the avg salary based on the sensors input
+_nn:    
+
+//implements AAT based on different context's information
+_negotiation:    
+
+planner:
+    plan(negotiateContract,[action(sendMessage(X,Y))],[_negotiation:urgency(X, Y, 10)],[beliefs:propose]). //fazer teste do actions com varias vars //verificar bug do posCond vazio
+
+! beliefs X :- communication contractSensor(X).
+! _nn X :- communication cvSensor(X). 
+! beliefs experience(X) :- _nn seniority(X). 
+
+! _negotiation X :- communication contractSensor(X).
+! _negotiation avgSalary(X) :- _nn avgSalary(X).
+
+
+! _negotiation urgency(careerPossibilities, high, 10) :- beliefs experience(senior).
+! _negotiation urgency(careerPossibilities, high, 10) :- beliefs experience(specialist).
+! _negotiation urgency(careerPossibilities, medium, 10) :- beliefs experience(midLevel).
+! _negotiation urgency(careerPossibilities, low, 10) :- beliefs experience(junior).
+
+! _negotiation urgency(car, no, 10) :- desires workDistance(near) & beliefs jobDistance(3).
+! _negotiation urgency(car, yes, 10) :- beliefs jobDistance(10).
+
+! _negotiation urgency(workingHours, 24, 10) :- desires busyDailyHours(8) & beliefs workingHours(2).
+
+! _negotiation urgency(workingHours, 32, 10) :- desires busyDailyHours(10) & beliefs workingHours(2).
+
+! _negotiation urgency(workingHours, 40, 10) :- desires busyDailyHours(12) & beliefs workingHours(2).
+
+! _negotiation urgency(permanentContract, yes, 10) :- desires busyDailyHours(10).
+
+! _negotiation urgency(permanentContract, no, 10) :- desires busyDailyHours(6).
+
+
+
+
+
+ // ! _negotiation urgency(salary, 12000, 10) :- _nn greater(144000) & beliefs jobDescription(programmer) & desires job(programmer). 

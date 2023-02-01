@@ -32,27 +32,13 @@ def execute():
     }
 
     # the agent can read this data to trigger from sensor to NN
-    cv_data = {
-        'Rating': 2,
-        'Size': '51 to 200 employees',
-        'Type of ownership': 'Unknown',
-        'Industry': 'Architectural & Engineering Services',
-        'Sector': 'Business Services',
-        'Revenue': '$25 to $50 million (USD)',
-        'num_comp': 0,
-        'hourly': 0,
-        'employer_provided': 0,
-        'job_state': 'AL',
-        'same_state': 0,
-        'age': 20,
-        'python_yn': 0,
-        'spark': 0,
-        'aws': 0,
-        'excel': 0,
-        'job_simp': 'na',
-        'seniority': 'na'
-    }
-     
+    cv_data = {'python_yn': 1,
+               'spark': 1,
+               'aws': 1,
+               'excel': 1,
+               'job_simp': 'data scientist',
+               'seniority': 'senior'
+               }
 
     NNCtx.ctx_name = '_nn'
 
@@ -66,13 +52,12 @@ def execute():
 
     cv_sensor = CVSensor('cvSensor')   
 
-    agent = AgentDefinition('sigon/experiment3_agents_v2/aat_agent_nn_salary_experience_v2-scenario3_low_salary.on', ctxs,
+    agent = AgentDefinition('sigon/experiment2_agents_v2/aat_agent_nn_salary_experience_v2-scenario2.on', ctxs,
                             [read_sensor, cv_sensor])
     
     agent.run()    
-
+    
     cv_sensor.perceive(json.dumps(cv_data))
-
     read_sensor.perceive(json.dumps(job_contract_competition))
     
     
@@ -91,11 +76,35 @@ for i in range(number_executions):
 print(times)
     
 
-# acting  ['salary', ' 2000']
-# acting  ['careerPossibilities', ' low']
-# [0.09042787551879883]
+# acting  ['careerPossibilities', ' high']
+# acting  ['car', ' yes']
+# acting  ['workingHours', ' 40']
+# acting  ['careerPossibilities', ' high']
+# acting  ['car', ' yes']
+# acting  ['workingHours', ' 40']
+# acting  ['salary', ' 4000']
+# tempo [0.0959627628326416]
+# calcular f.u
 
 
-# salary - 2000 (peso 1) - peso na f.u 0.64
-# careerPossibilities - low (1) - peso na f.u 0.36
+# salary - 400 (peso 1) - peso na f.u 0.2900838579284962
+# workingHours - 40 (1) -  peso na f.u 0.38507247973666225
+# car - yes (1) - peso na f.u 0.07628234656996354
+# permanentContract - yes (1) - peso na f.u 0.19444527477051546
+# careerPossibilities - high (1) - peso na f.u 0.05411415124288346
+
+# F.U 1 - sem salario baixo - job_util8
+
+
+# acting  ['car', ' yes']
+# acting  ['workingHours', ' 40']
+# acting  ['car', ' yes']
+# acting  ['workingHours', ' 40']
+# acting  ['car', ' yes']
+# acting  ['workingHours', ' 40']
+# acting  ['salary', ' 3000']
+# acting  ['careerPossibilities', ' high']
+# [0.0989532470703125]
+
+# 1*0.2900838579284962 + 1*0.38507247973666225 + 1*0.07628234656996354 + 1*0.19444527477051546 + 1*0.05411415124288346
 # F.U 1
