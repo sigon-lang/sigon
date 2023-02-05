@@ -50,7 +50,7 @@ def execute():
         'aws': 0,
         'excel': 0,
         'job_simp': 'na',
-        'seniority': 'na'
+        'seniority': 'junior'
     }
      
 

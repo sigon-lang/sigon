@@ -1,7 +1,6 @@
 import pandas as pd
 from scipy import stats
 import matplotlib.pyplot as plt
-import math
 
 
 # H0: using nn does not affect reasoning time
@@ -17,6 +16,7 @@ counter = 0 #
 
 for util in df['max.util.']:
     util_value = util.replace(',', '.')   
+    print(format(float(util_value), ".3f"))
     
     if float(result) > float(util_value):
         counter += 1
