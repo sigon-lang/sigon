@@ -12,10 +12,6 @@ from prolog.prolog_service import PrologService
 
 # Description
 
-# Initial evalutation for setup 1- salary definition
-# Compare time to execute - 21 executions - excluding the first one - reason: modules loading time
-# files to be tested: aat_agent_nn_salary_v2_sem_experiencia x aat_agent_salary_2
-
 
 job_contract = {
     # Salary: The possible values are (a) \$7,000, (b) \$12,000, or (c) \$20,000; - changed to year
@@ -46,7 +42,7 @@ job_contract_competition = {
     "fte": [24, 32, 40]
 }
 
-# the agent can read this data to trigger from sensor to NN
+# the agent can read this data to trigger the cv sensor
 cv_data = {'python_yn': 1,
            'spark': 1,
            'aws': 1,
@@ -71,7 +67,7 @@ def execute():
 
     # cv_sensor = CVSensor('cvSensor')
 
-    agent = AgentDefinition('experiment1_agents_v2/aat_agent_salary_2.on', ctxs,
+    agent = AgentDefinition('experiment2/aat_agent_paper.on', ctxs,
                             [read_sensor])
 
     agent.run()
@@ -83,12 +79,6 @@ def execute():
     # cv_sensor.perceive(json.dumps(cv_data))
     # cv_sensor.clear_data()
 
-
-# def process_data():
-#     read_sensor.perceive(json.dumps(job_contract))
-#     read_sensor.clear_data()
-#     cv_sensor.perceive(json.dumps(cv_data))
-#     cv_sensor.clear_data()
 
 
 def main():

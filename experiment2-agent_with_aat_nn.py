@@ -9,12 +9,6 @@ import time
 from prolog.prolog_service import PrologService
 # from memory_profiler import profile
 
-# Description
-
-# Initial evalutation for setup 1- salary definition
-# Compare time to execute - 21 executions - excluding the first one - reason: modules loading time
-# files to be tested: aat_agent_nn_salary_v2_sem_experiencia x aat_agent_salary_2
-
 
 job_contract = {
     # Salary: The possible values are (a) \$7,000, (b) \$12,000, or (c) \$20,000; - changed to year
@@ -69,26 +63,18 @@ def execute():
 
     cv_sensor = CVSensor('cvSensor')
 
-    agent = AgentDefinition('experiment1_agents_v2/aat_agent_nn_salary_v2_sem_experiencia_ARTIGO.on', ctxs,
+    agent = AgentDefinition('experiment2/aat_nn_agent_paper.on', ctxs,
                             [read_sensor, cv_sensor])
 
     agent.run()
 
     cv_sensor.perceive(json.dumps(cv_data))
+    # one can use clear_data() to simulate triggering the NN in every reasoning cycle
+    # cv_sensor.clear_data()
     
 
     read_sensor.perceive(json.dumps(job_contract))
-    read_sensor.clear_data()
-
-   
-    
-
-
-# def process_data():
-#     read_sensor.perceive(json.dumps(job_contract))
-#     read_sensor.clear_data()
-#     cv_sensor.perceive(json.dumps(cv_data))
-#     cv_sensor.clear_data()
+    read_sensor.clear_data()  
 
 
 def main():

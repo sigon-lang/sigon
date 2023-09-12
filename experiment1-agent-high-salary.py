@@ -9,11 +9,7 @@ import time
 # from memory_profiler import profile
 
 
-# Description
 
-# Initial evalutation for setup 1- salary definition
-# Compare time to execute - 21 executions - excluding the first one - reason: modules loading time
-# files to be tested: aat_agent_nn_salary_v2_sem_experiencia x aat_agent_salary_2
 
 # @profile
 def execute():
@@ -24,14 +20,13 @@ def execute():
         # Responsibilities given to the employer. The possible values are (a) QA, (b) Programmer, (c) Team Manager, or (d) Project Manager;
         # "jobDescription": ["qa", "programmer", "teamManager", "projectManager"],
         # (a) providing a leased company car, (b) no leased car, or (c) no agreement;
-        "carBenefits": ["yes", "no"], # distancia
-        "permanentContract": ["yes", "no"], # nao sei - pode ser atraves das horas ocupadas
-        "careerPossibilities": ["low", "medium", "high"], # idade ou experiencia ok
+        "carBenefits": ["yes", "no"], 
+        "permanentContract": ["yes", "no"], 
+        "careerPossibilities": ["low", "medium", "high"], 
         # This issue describes the number of working hours required by the employee per day  The possible values are (a) 8 h, (b) 9 h, or (c) 10 h.
-        "fte": [24, 32, 40] # horas ocupadas
-    }
+        "fte": [24, 32, 40]     }
 
-    # the agent can read this data to trigger from sensor to NN
+    
     cv_data = {'python_yn': 1,
                'spark': 1,
                'aws': 1,
@@ -52,7 +47,7 @@ def execute():
 
     cv_sensor = CVSensor('cvSensor')   
 
-    agent = AgentDefinition('experiment2_agents_v2/aat_agent_nn_salary_experience_v2-scenario2.on', ctxs,
+    agent = AgentDefinition('experiment1/aat_nn_agent_high_salary.on', ctxs,
                             [read_sensor, cv_sensor])
     
     agent.run()    
@@ -76,35 +71,3 @@ for i in range(number_executions):
 print(times)
     
 
-# acting  ['careerPossibilities', ' high']
-# acting  ['car', ' yes']
-# acting  ['workingHours', ' 40']
-# acting  ['careerPossibilities', ' high']
-# acting  ['car', ' yes']
-# acting  ['workingHours', ' 40']
-# acting  ['salary', ' 4000']
-# tempo [0.0959627628326416]
-# calcular f.u
-
-
-# salary - 400 (peso 1) - peso na f.u 0.2900838579284962
-# workingHours - 40 (1) -  peso na f.u 0.38507247973666225
-# car - yes (1) - peso na f.u 0.07628234656996354
-# permanentContract - yes (1) - peso na f.u 0.19444527477051546
-# careerPossibilities - high (1) - peso na f.u 0.05411415124288346
-
-# F.U 1 - sem salario baixo - job_util8
-
-
-# acting  ['car', ' yes']
-# acting  ['workingHours', ' 40']
-# acting  ['car', ' yes']
-# acting  ['workingHours', ' 40']
-# acting  ['car', ' yes']
-# acting  ['workingHours', ' 40']
-# acting  ['salary', ' 3000']
-# acting  ['careerPossibilities', ' high']
-# [0.0989532470703125]
-
-# 1*0.2900838579284962 + 1*0.38507247973666225 + 1*0.07628234656996354 + 1*0.19444527477051546 + 1*0.05411415124288346
-# F.U 1
