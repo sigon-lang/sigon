@@ -71,7 +71,7 @@ def execute():
 
     # cv_sensor = CVSensor('cvSensor')
 
-    agent = AgentDefinition('sigon/experiment1_agents_v2/aat_agent_salary_2.on', ctxs,
+    agent = AgentDefinition('experiment1_agents_v2/aat_agent_salary_2.on', ctxs,
                             [read_sensor])
 
     agent.run()

@@ -52,7 +52,7 @@ def execute():
 
     cv_sensor = CVSensor('cvSensor')   
 
-    agent = AgentDefinition('sigon/experiment2_agents_v2/aat_agent_nn_salary_experience_v2-scenario2.on', ctxs,
+    agent = AgentDefinition('experiment2_agents_v2/aat_agent_nn_salary_experience_v2-scenario2.on', ctxs,
                             [read_sensor, cv_sensor])
     
     agent.run()    
@@ -63,7 +63,7 @@ def execute():
     
 
 
-number_executions = 1
+number_executions = 20
 times = []
 for i in range(number_executions):
     start_time = time.time()

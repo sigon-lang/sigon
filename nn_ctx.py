@@ -14,8 +14,8 @@ class NNCtx(ContextService):
     _instance = None    
     avg_salary = 0.0
     # Load model
-    model = torch.jit.load('sigon/regressorv4-f.pt')
-    with open('sigon/encoder', 'rb') as f:
+    model = torch.jit.load('regressorv4-f.pt')
+    with open('encoder', 'rb') as f:
             enc = pickle.load(f)
     
     data = {
