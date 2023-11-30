@@ -32,7 +32,7 @@ class NNCtx(ContextService):
     data_type = 'train' # test or predict    
     epochs = 5
     feature_extraction_epochs = 10
-    model_name = "CNN_EMBER.h5"
+    model_name = "CNN_EMBER"
     feature_extraction_model = None
     
     
@@ -54,31 +54,39 @@ class NNCtx(ContextService):
         # NOTE: can return info about history accuracy(2) - returns accuary on the second month
         return []
     @classmethod
-    def fine_tuning(self, path, model_dir):
-        new_model = self.feature_extraction(path, model_dir)
+    def fine_tuning(self, config):
+        self.feature_extraction(config)
         self.histories.pop() # removing last history that should not be considered
-        new_model.trainable = True
+        self.model.trainable = True
+
+        
         self.model.summary()
 
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        self.data_type = config.get('data_type', 'train')
+        x_test0, y_test0 = self.load_data(config['path'])
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
 
-        x_test0, y_test0 = self.load_data(path)
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs)
+        self.histories.append({
+            'accuracy': history.history['accuracy'][-1],
+            'loss': history.history['loss'][-1]
+        })
 
 
-        self.histories.append(history)
+        # loss, acc = self.model.evaluate(x_test0,y_test0)
+        # print("loss: " + str(loss))
+        # print("acc: " + str(acc))
 
-
-        loss, acc = self.model.evaluate(x_test0,y_test0)
-        print("loss: " + str(loss))
-        print("acc: " + str(acc))
-
-        # self.model.save(self.model_name, overwrite=True)
+        self.model.save(self.format_model_name(config['month'], 'fine_tuning'), overwrite=True)
     
     @classmethod
-    def feature_extraction(self, path, model_dir):
+    def format_model_name(self, month, mode):
+        return f'{self.model_name}-{month}-{mode}.keras' 
 
-        base_model= load_model(model_dir)
+    @classmethod
+    def feature_extraction(self, config):
+        # I can set a config to check if a feature extraction is already available
+        base_model= load_model(config['model_dir'])
         base_model.trainable = False
 
         # Create new model on top
@@ -94,31 +102,37 @@ class NNCtx(ContextService):
 
         self.model.summary()
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
-
-        x_test0, y_test0 = self.load_data(path)
+        self.data_type = config.get('data_type', 'train')
+        x_test0, y_test0 = self.load_data(config['path'])
         
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs)
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
 
-        self.histories.append(history)
+        self.histories.append({
+            'accuracy': history.history['accuracy'][-1],
+            'loss': history.history['loss'][-1]
+        })
 
+        self.model.save(self.format_model_name(config['month'], 'feature_extraction'), overwrite=True)
 
-
-        # return new_model
 
     
     @classmethod
-    def test_model(self, path, model_dir=''):
-        if model_dir != '':
-            model = load_model(model_dir)        
+    def test_model(self, config):
+        if config['model_dir'] != '':
+            model = load_model(config['model_dir'])        
         else:
             model = self.model
-        x_test0, y_test0 = self.load_data(path)        
+        self.data_type = config.get('data_type', 'test')
+        x_test0, y_test0 = self.load_data(config['path'])        
         loss, acc = model.evaluate(x_test0,y_test0)
         # adequar para poder colocar no histories
-        return loss, acc
+        self.histories.append({
+            'accuracy': acc,
+            'loss': loss
+        })        
     
     @classmethod
-    def train_model(self, path):
+    def train_model(self, config):
 
         self.model = Sequential()
 
@@ -139,15 +153,18 @@ class NNCtx(ContextService):
 
         # compile model
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
-
-        x_train0, y_train0 = self.load_data(path)
+        self.data_type = config.get('data_type', 'train')
+        x_train0, y_train0 = self.load_data(config['path'])
 
         # fit our model
         history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs)
         # save the model
-        self.model.save(self.model_name, overwrite=True)
-
-        self.histories.append(history) # pegar a media aqui?
+        self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
+        self.histories.append({
+            'accuracy': history.history['accuracy'][-1],
+            'loss': history.history['loss'][-1]
+        })
+        
 
     @classmethod
     def load_data(self, path):
@@ -202,24 +219,28 @@ class NNCtx(ContextService):
 
         return x_train0, y_train0
 
-        
+
+    def predict(self, config):
+        pass 
 
     @classmethod
-    def append_fact(self, fact) -> bool: # can train, test or predict
+    def append_fact(self, fact) -> bool: # can train, test or predict - example down there
         # here fact only have a dir to the current data
-        #start_time = time.time()        
-        # fact = json.loads(fact)
-        # self.check_keys(fact)
-        # self.data.update(fact)  
-        # entry = pd.DataFrame([self.data])
-        # encoded_entry = self.enc.transform(entry).toarray()
+        try:
 
-        # entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
-        # formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
-        # self.avg_salary = (self.model.forward(formated_entry).item()*1000)/12
-        # #print("tempo da nn {}".format(time.time() - start_time))
-        
-        return True
+            operations = {
+                'test': self.test_model,
+                'train': self.train_model,
+                'fine_tuning': self.fine_tuning,
+                'feature_extraction': self.feature_extraction,
+                'predict': self.predict
+            }
+            operations[fact.get('mode', 'test')](fact)
+           
+            
+            return True
+        except Exception as e: 
+            print('error while processing fact', e)
 
     @classmethod
     def add_initial_fact(self, fact) -> bool:
@@ -241,39 +262,51 @@ class NNCtx(ContextService):
         cls._instance = None
 
     
+# TEST - OK
+# fact = {
+#         'month': '01',
+#         'mode': 'train',        
+#         'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+# }
+
+# TEST - OK
+# fact = {
+#     'month': '01',
+#     'mode': 'test',
+#     'model_dir': 'CNN_EMBER-01-train.h5',
+#     'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+# }
+
+# TEST - OK
+# fact = {
+#         'mode': 'feature_extraction',
+#         'month': '01',
+#         'model_dir': 'CNN_EMBER-01-train.h5',
+#         'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+# }
 
 fact = {
-        'mode': 'train',        
-        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+        'mode': 'fine_tuning',
+        'month': '01',
+        'model_dir': 'CNN_EMBER-01-train.h5',
+        'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
 }
 
-fact = {
-        'mode': 'test',
-        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
-}
-
-fact = {
-        'mode': 'feature_extraction',
-        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
-}
-
-fact = {
-        'mode': 'fine',
-        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
-}
-
-fact = {
-        'mode': 'predict',
-        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
-}
+# fact = {
+#         'mode': 'predict',
+#         'input': '',
+#         'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+# }
 
 NNCtx.ctx_name = '_nn'
-# OK
-# NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 
-NNCtx.data_type = 'train'
+NNCtx.append_fact(fact)
+# # OK
+# # NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 
-NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
+# NNCtx.data_type = 'train'
+
+# NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
 
@@ -284,6 +317,6 @@ NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/cont
 # NNCtx.fine_tuning(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
-NNCtx.data_type = 'test'
+# NNCtx.data_type = 'test'
 
-NNCtx.test_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02') 
+# NNCtx.test_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02') 
