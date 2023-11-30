@@ -29,10 +29,11 @@ class NNCtx(ContextService):
 
     _instance = None    
     histories = [] # contains information about previous training
-    mode = 'train' # test or predict    
+    data_type = 'train' # test or predict    
     epochs = 5
     feature_extraction_epochs = 10
     model_name = "CNN_EMBER.h5"
+    feature_extraction_model = None
     
     
     
@@ -52,7 +53,7 @@ class NNCtx(ContextService):
     def verify(self, fact): 
         # NOTE: can return info about history accuracy(2) - returns accuary on the second month
         return []
-    
+    @classmethod
     def fine_tuning(self, path, model_dir):
         new_model = self.feature_extraction(path, model_dir)
         self.histories.pop() # removing last history that should not be considered
@@ -72,8 +73,9 @@ class NNCtx(ContextService):
         print("loss: " + str(loss))
         print("acc: " + str(acc))
 
-        self.model.save(self.model_name, overwrite=True)
+        # self.model.save(self.model_name, overwrite=True)
     
+    @classmethod
     def feature_extraction(self, path, model_dir):
 
         base_model= load_model(model_dir)
@@ -99,52 +101,58 @@ class NNCtx(ContextService):
 
         self.histories.append(history)
 
-        return new_model
+
+
+        # return new_model
 
     
-
-    def test_model(self, path, model_dir):
-        model = load_model(model_dir)
-        x_test0, y_test0 = self.load_data(path)
+    @classmethod
+    def test_model(self, path, model_dir=''):
+        if model_dir != '':
+            model = load_model(model_dir)        
+        else:
+            model = self.model
+        x_test0, y_test0 = self.load_data(path)        
         loss, acc = model.evaluate(x_test0,y_test0)
+        # adequar para poder colocar no histories
         return loss, acc
     
-
+    @classmethod
     def train_model(self, path):
 
-        model = Sequential()
+        self.model = Sequential()
 
         INPUT_SHAPE = (48, 48, 1)
 
-        model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
-        model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        model.add(Flatten())
+        self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
+        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        self.model.add(Flatten())
 
-        model.add(Dense(400, activation='relu'))
-        model.add(Dense(1, activation='sigmoid'))
+        self.model.add(Dense(400, activation='relu'))
+        self.model.add(Dense(1, activation='sigmoid'))
 
         # view model layers
-        model.summary()
+        self.model.summary()
 
         # compile model
-        model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
 
         x_train0, y_train0 = self.load_data(path)
 
         # fit our model
-        history = model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs)
+        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs)
         # save the model
-        model.save(self.model_name)
+        self.model.save(self.model_name, overwrite=True)
 
-        self.histories.append(history)
+        self.histories.append(history) # pegar a media aqui?
 
-
+    @classmethod
     def load_data(self, path):
-        x_dat = 'X' + self.mode + '.dat'
-        y_dat = 'y' + self.mode + '.dat'
+        x_dat = 'X_' + self.data_type + '.dat'
+        y_dat = 'y_' + self.data_type + '.dat'
         x_train = np.memmap(os.path.join(path, x_dat), mode="r+", dtype=np.float32)
         y_train = np.memmap(os.path.join(path, y_dat), mode="r+", dtype=np.float32)
 
@@ -200,16 +208,16 @@ class NNCtx(ContextService):
     def append_fact(self, fact) -> bool: # can train, test or predict
         # here fact only have a dir to the current data
         #start_time = time.time()        
-        fact = json.loads(fact)
-        self.check_keys(fact)
-        self.data.update(fact)  
-        entry = pd.DataFrame([self.data])
-        encoded_entry = self.enc.transform(entry).toarray()
+        # fact = json.loads(fact)
+        # self.check_keys(fact)
+        # self.data.update(fact)  
+        # entry = pd.DataFrame([self.data])
+        # encoded_entry = self.enc.transform(entry).toarray()
 
-        entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
-        formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
-        self.avg_salary = (self.model.forward(formated_entry).item()*1000)/12
-        #print("tempo da nn {}".format(time.time() - start_time))
+        # entry_torch = torch.tensor(np.array(encoded_entry), dtype=torch.float)
+        # formated_entry = torch.tensor(np.array(entry_torch), dtype = torch.float)
+        # self.avg_salary = (self.model.forward(formated_entry).item()*1000)/12
+        # #print("tempo da nn {}".format(time.time() - start_time))
         
         return True
 
@@ -231,3 +239,51 @@ class NNCtx(ContextService):
     @classmethod
     def reset(cls):
         cls._instance = None
+
+    
+
+fact = {
+        'mode': 'train',        
+        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+}
+
+fact = {
+        'mode': 'test',
+        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+}
+
+fact = {
+        'mode': 'feature_extraction',
+        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+}
+
+fact = {
+        'mode': 'fine',
+        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+}
+
+fact = {
+        'mode': 'predict',
+        'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+}
+
+NNCtx.ctx_name = '_nn'
+# OK
+# NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
+
+NNCtx.data_type = 'train'
+
+NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
+
+
+
+
+
+
+# OK
+# NNCtx.fine_tuning(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
+
+
+NNCtx.data_type = 'test'
+
+NNCtx.test_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02') 
