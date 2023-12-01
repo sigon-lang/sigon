@@ -19,7 +19,7 @@ class DataSensor(Sensor):
 
     def add(self, *args):           
         #args contain the current month to be processed        
-        self.current_dir = os.path.join(self.base_dir, self.months[args[0]])
+        self.current_dir = os.path.join(self.base_dir, args[0])
         
 
     def verify(self, fact): 

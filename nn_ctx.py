@@ -28,12 +28,14 @@ import os
 class NNCtx(ContextService):
 
     _instance = None    
-    histories = [] # contains information about previous training
+    histories_evaluate = [] # contains information about previous training
+    histories_training = [] # contains information about previous training
     data_type = 'train' # test or predict    
-    epochs = 5
-    feature_extraction_epochs = 10
+    epochs = 1
+    feature_extraction_epochs = 1
     model_name = "CNN_EMBER"
     feature_extraction_model = None
+    mode = 'train' # NOTE I dont know if this is right
     
     
     
@@ -52,11 +54,16 @@ class NNCtx(ContextService):
     @classmethod
     def verify(self, fact): 
         # NOTE: can return info about history accuracy(2) - returns accuary on the second month
+        if 'history_evaluations' in fact:
+            return [{fact: self.histories_evaluate}]
+        elif 'history_trainings' in fact:
+            return [{fact: self.histories_training}]            
+        
         return []
     @classmethod
     def fine_tuning(self, config):
         self.feature_extraction(config)
-        self.histories.pop() # removing last history that should not be considered
+        # self.histories.pop() # removing last history that should not be considered
         self.model.trainable = True
 
         
@@ -67,7 +74,11 @@ class NNCtx(ContextService):
         x_test0, y_test0 = self.load_data(config['path'])
         history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
 
-        self.histories.append({
+        print({
+            'accuracy': history.history['accuracy'][-1],
+            'loss': history.history['loss'][-1]
+        })
+        self.histories_training.append({
             'accuracy': history.history['accuracy'][-1],
             'loss': history.history['loss'][-1]
         })
@@ -107,7 +118,12 @@ class NNCtx(ContextService):
         
         history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
 
-        self.histories.append({
+        print({
+            'accuracy': history.history['accuracy'][-1],
+            'loss': history.history['loss'][-1]
+        })
+
+        self.histories_training.append({
             'accuracy': history.history['accuracy'][-1],
             'loss': history.history['loss'][-1]
         })
@@ -126,7 +142,7 @@ class NNCtx(ContextService):
         x_test0, y_test0 = self.load_data(config['path'])        
         loss, acc = model.evaluate(x_test0,y_test0)
         # adequar para poder colocar no histories
-        self.histories.append({
+        self.histories_evaluate.append({
             'accuracy': acc,
             'loss': loss
         })        
@@ -160,7 +176,7 @@ class NNCtx(ContextService):
         history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs)
         # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
-        self.histories.append({
+        self.histories_training.append({
             'accuracy': history.history['accuracy'][-1],
             'loss': history.history['loss'][-1]
         })
@@ -224,21 +240,42 @@ class NNCtx(ContextService):
         pass 
 
     @classmethod
-    def append_fact(self, fact) -> bool: # can train, test or predict - example down there
+    def create_config(self, fact):
+        # parse path to get the month
+        path = fact[fact.find("(")+1:fact.find(")")]
+        month = path.split('/')[-1]
+        return {
+            'mode': self.mode,
+            'month': month,
+            'path': fact[fact.find("(")+1:fact.find(")")],
+            'model_dir': ''
+        }
+
+    @classmethod
+    def append_fact(self, fact) -> bool: # can train, test or predict
         # here fact only have a dir to the current data
         try:
 
-            operations = {
-                'test': self.test_model,
-                'train': self.train_model,
-                'fine_tuning': self.fine_tuning,
-                'feature_extraction': self.feature_extraction,
-                'predict': self.predict
-            }
-            operations[fact.get('mode', 'test')](fact)
-           
+            if 'setOperation' in fact:
+                self.mode = fact[fact.find("(")+1:fact.find(")")]            
+                return True
+            elif 'execute' in fact:
+                config = self.create_config(fact)
+                operations = {
+                    'test': self.test_model,
+                    'train': self.train_model,
+                    'fine_tuning': self.fine_tuning,
+                    'feature_extraction': self.feature_extraction,
+                    'predict': self.predict
+                }
+                operations[config.get('mode', 'test')](config)
+                # test the model after train, fine_tuning or FE
+                if config['mode'] != 'test' and config['mode'] != 'predict':
+                    self.test_model(config)
+                return True
+
+            return False
             
-            return True
         except Exception as e: 
             print('error while processing fact', e)
 
@@ -285,22 +322,22 @@ class NNCtx(ContextService):
 #         'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
 # }
 
-fact = {
-        'mode': 'fine_tuning',
-        'month': '01',
-        'model_dir': 'CNN_EMBER-01-train.h5',
-        'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
-}
-
 # fact = {
-#         'mode': 'predict',
-#         'input': '',
-#         'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+#         'mode': 'fine_tuning',
+#         'month': '01',
+#         'model_dir': 'CNN_EMBER-01-train.h5',
+#         'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
 # }
 
-NNCtx.ctx_name = '_nn'
+# # fact = {
+# #         'mode': 'predict',
+# #         'input': '',
+# #         'data_dir': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01'
+# # }
 
-NNCtx.append_fact(fact)
+# NNCtx.ctx_name = '_nn'
+
+# NNCtx.append_fact(fact)
 # # OK
 # # NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 

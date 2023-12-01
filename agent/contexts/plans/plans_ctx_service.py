@@ -53,8 +53,8 @@ class PlansContextService (ContextService):
                     if bool(cls.bindings):
                         return False  # testar essa condicao
                 else:
-                    cls.bindings.extend(cls.ctxs[pC].verify(t))
-                    if not bool(cls.bindings):
+                    # cls.bindings.extend(cls.ctxs[pC].verify(t)) - this instruction assumes an OR - COMMENTED FOR THE FINAL EXPERIMENT
+                    if not bool(cls.ctxs[pC].verify(t)):
                         return False
 
         return True

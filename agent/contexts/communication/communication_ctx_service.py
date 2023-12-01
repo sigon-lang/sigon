@@ -52,7 +52,7 @@ class CommunicationContextService(ContextService):
                 # return cls.verify_implementation # invocar a funcao de verify - opcao 2
 
         # NOTE: eu poderia jogar a implementacao do verify e add dentro do sensor
-        return PrologService.verify(fact, cls.ctx_name)
+        return PrologService.verify_custom(fact, cls.ctx_name)
 
     @classmethod
     def remove(cls, fact):
