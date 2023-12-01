@@ -20,7 +20,6 @@ class MetricsCtx(ContextService):
     @classmethod
     def verify(self, fact):         
         # returns performance(X)
-        PrologService.append_fact('performance(high)', self.ctx_name)
         return PrologService.verify_custom(fact, self.ctx_name)
 
     @classmethod
@@ -64,7 +63,7 @@ class MetricsCtx(ContextService):
     @classmethod
     def parse_metrics(self, history):
         # [{'accuracy': 0.8767322301864624, 'loss': 0.2873293161392212}]
-        accuracy = round(history[0]['accuracy']*100)
+        accuracy = round(history[-1]['accuracy']*100)
         # loss = round(history[0]['loss'])
         
         

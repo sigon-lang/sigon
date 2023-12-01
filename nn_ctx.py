@@ -97,7 +97,11 @@ class NNCtx(ContextService):
     @classmethod
     def feature_extraction(self, config):
         # I can set a config to check if a feature extraction is already available
-        base_model= load_model(config['model_dir'])
+        if 'model_dir' in config and config['model_dir'] != '':
+            base_model= load_model(config['model_dir'])
+        else:
+            base_model = self.model.__copy__()
+            
         base_model.trainable = False
 
         # Create new model on top
@@ -264,10 +268,11 @@ class NNCtx(ContextService):
                 operations = {
                     'test': self.test_model,
                     'train': self.train_model,
-                    'fine_tuning': self.fine_tuning,
-                    'feature_extraction': self.feature_extraction,
+                    'fineTuning': self.fine_tuning,
+                    'featureExtraction': self.feature_extraction,
                     'predict': self.predict
                 }
+                print(config['mode'])
                 operations[config.get('mode', 'test')](config)
                 # test the model after train, fine_tuning or FE
                 if config['mode'] != 'test' and config['mode'] != 'predict':

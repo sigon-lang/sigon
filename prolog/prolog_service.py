@@ -79,8 +79,10 @@ class PrologService():
         return fact.join([ctx+'(', ')'])
 
 
-    def retract_all():
-        PrologService.prolog.retractall('negotiation(X)', catcherrors=False)
+    def retract_all(fact, module):
+        PrologService.prolog.retractall(PrologService.set_context(
+                fact, module), catcherrors=False)
+        
 
     
     # def addInitialFact(fact, module):

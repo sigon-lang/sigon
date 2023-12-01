@@ -101,3 +101,8 @@ class CommunicationContextService(ContextService):
     @classmethod
     def get_name(cls) -> str:
         return cls.ctx_name
+    
+
+    @classmethod
+    def remove_all(cls, fact):
+        PrologService.retract_all(fact, cls.ctx_name)
