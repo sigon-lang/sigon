@@ -68,7 +68,12 @@ class AgentWalker(AgentListener):
         return super().enterBridgeRule(ctx)
 
     def enterSomethingToBeTrue(self, ctx: AgentParser.SomethingToBeTrueContext):
-        self.plan = Plan()
+        
+        
+        self.plan = Plan()    
+        self.plan.actions = [] 
+        self.plan.posconditions = {}
+        self.plan.preconditions = {}
         self.plan.something_to_be_true = ctx.getText()
         self.plans.append(self.plan)
         return super().enterSomethingToBeTrue(ctx)
@@ -98,7 +103,11 @@ class AgentWalker(AgentListener):
         return super().enterPostConditions(ctx)
 
     def enterFunctionName(self, ctx: AgentParser.FunctionNameContext):
-        self.action = Action(ctx.getText())
+        new_action = Action(ctx.getText())
+        new_action.arguments = []
+        new_action.pos_conditions = []
+        new_action.pre_conditions = []
+        self.action = new_action
         self.plan.actions.append(self.action)
         return super().enterFunctionName(ctx)
 

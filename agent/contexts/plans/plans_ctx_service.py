@@ -74,7 +74,7 @@ class PlansContextService (ContextService):
 
     @classmethod
     def find_bindings(cls, arguments):
-
+        # check if I have to find bindings
         variables_bindings = {}
         bindings = []
         variables = arguments.split(',')
@@ -118,8 +118,15 @@ class PlansContextService (ContextService):
                     a = actions_to_be_executed[0]
                     assert isinstance(a, Action)
                     args = a.arguments  # NOTE: verificar pq no sigon em java era uma lista
+                    constants = []
                     # provavelmente fazer um dict com lista
-                    action_bindings = cls.find_bindings(args[0])
+                    for arg in args:
+                        if arg[0].islower():
+                            constants.append(arg)
+                            # args.remove(arg)
+
+                    action_bindings = cls.find_bindings(args[0]) if len(args) > 0 else []
+                    action_bindings.extend(constants)
                     args = args[0].split(',')
                     #args = re.sub('[\\[\\]]', '', args)
                     if not args:

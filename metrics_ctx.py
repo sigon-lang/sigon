@@ -14,11 +14,13 @@ class MetricsCtx(ContextService):
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+        
         return cls._instance
 
     @classmethod
     def verify(self, fact):         
         # returns performance(X)
+        PrologService.append_fact('performance(high)', self.ctx_name)
         return PrologService.verify_custom(fact, self.ctx_name)
 
     @classmethod
@@ -54,8 +56,10 @@ class MetricsCtx(ContextService):
     # //performance(medium).  >= 60 < 83
     # //performance(high).  >= 83 < 100    
 
-        
-        PrologService.append_fact(self.parse_metrics(fact), self.ctx_name)
+        if type(fact) == list and 'accuracy' in fact[0]:
+            PrologService.append_fact(self.parse_metrics(fact), self.ctx_name)
+        elif 'operation' in fact:
+            PrologService.append_fact(fact, self.ctx_name)
 
     @classmethod
     def parse_metrics(self, history):
