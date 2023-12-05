@@ -8,6 +8,7 @@ from prolog.prolog_service import PrologService
 class MetricsCtx(ContextService):
 
     _instance = None    
+    metrics = []
     
     
     @classmethod
@@ -64,6 +65,7 @@ class MetricsCtx(ContextService):
     def parse_metrics(self, history):
         # [{'accuracy': 0.8767322301864624, 'loss': 0.2873293161392212}]
         accuracy = round(history[-1]['accuracy']*100)
+        self.metrics.append(history[-1])
         # loss = round(history[0]['loss'])
         
         

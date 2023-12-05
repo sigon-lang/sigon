@@ -33,6 +33,8 @@ parser.add_argument('--results-dir', type=str, default='./results', dest='r_dir'
 parser.add_argument('--model-name', type=str, default='./models', dest='model_name', help="default: %(default)s")
 parser.add_argument('--epochs', type=str, default='2', dest='epochs', help="default epochs: %(default)s")
 
+histories = []
+
 def run(args):
 
     path = args.d_dir
@@ -50,9 +52,7 @@ def run(args):
     #make into a dataframe
     x_test = pd.DataFrame(x_test)
     y_test = pd.DataFrame(y_test)
-    print(x_test.shape)
-    print(y_test.shape)
-
+    
 
     # Combining features and lables of train dataset
     x_test[2381] = y_test[0]
@@ -61,8 +61,7 @@ def run(args):
     #remove unlabelled rows from the dataframe
     x_test.drop(x_test[(x_test[2381] == -1)].index, inplace=True)
     y_test.drop(y_test[(y_test[0] == -1)].index, inplace=True)
-    print(x_test.shape)
-    print(y_test.shape)
+    
 
     #reconstructing the X_train dataframe
     x_test.drop([2381], axis =1, inplace=True)
@@ -72,9 +71,9 @@ def run(args):
     y_test0 = y_test.values
 
     # dimension reduction
-    print(x_test0.shape)
+    
     x_test0 = np.delete(x_test0, np.s_[-77:], axis=1)
-    print(x_test0.shape)
+    
 
     # normalize data for printing (pixels range: [0, 255])
     min_max_scaler = preprocessing.MinMaxScaler((0, 255), copy=False)
@@ -96,12 +95,27 @@ def run(args):
     loss, acc = model.evaluate(x_test0,y_test0)
     print("loss: " + str(loss))
     print("acc: " + str(acc))
+    histories.append({
+        'accuracy': acc,
+        'loss': loss
+    })
 
 
 if __name__ == '__main__':
     # -load input-arguments
-    args = parser.parse_args()
-    args = argparse.Namespace(x_test="X_train.dat", y_test= "y_train.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01', model_name="cnn-finetuning18-01.h5")
-    # -set default-values for certain arguments based on chosen scenario & experiment
-    # -run experiment
-    run(args)
+    
+    
+    months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11', '2018-12']
+    
+    
+    
+    for month in months:
+    
+        args = parser.parse_args()
+        args = argparse.Namespace(x_test="X_test.dat", y_test= "y_test.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month, model_name="CNN_EMBER-2018-12-fine_tuning.keras")
+        # -set default-values for certain arguments based on chosen scenario & experiment
+        # -run experiment
+        run(args)
+
+    print(histories)

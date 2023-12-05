@@ -17,7 +17,7 @@ def execute():
     NNCtx.ctx_name = '_nn'
 
     MetricsCtx.ctx_name = '_metrics'
-    MetricsCtx.salaries = []
+    
 
     ctxs = []
     ctxs.append(NNCtx)
@@ -35,9 +35,20 @@ def execute():
     months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
               '2018-10', '2018-11', '2018-12']
     
+    # months = ['2018-01', '2018-02']
+    
     for month in months:
         data_sensor.perceive(month)
 
+    
+    print({
+        'histories_evaluate': NNCtx.histories_evaluate,
+        'histories_training': NNCtx.histories_training
+    })
+
+    print({
+        'metrics': MetricsCtx.metrics
+    })
 
 def main():
     number_executions = 1
