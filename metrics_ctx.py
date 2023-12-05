@@ -21,28 +21,38 @@ class MetricsCtx(ContextService):
     @classmethod
     def verify(self, fact):         
         # returns performance(X)
-        return PrologService.verify_custom(fact, self.ctx_name)
+        if 'findParameters' not in fact:
+            return PrologService.verify_custom(fact, self.ctx_name)
+        elif 'findParameters' in fact:
+            parameters = self.find_parameters()
+            
+            return [{fact: parameters}]
 
     @classmethod
-    def update_urgency(self, fact):
-        # fact contem avgSalary(Valor)
-        # pŕeciso formatar antes o avgSalary
-        # find the lowest difference from salary and fact
-        if len(self.salaries) > 0:
-            min_value = abs(float(self.salaries[0]) - float(fact))
-            current_salary = self.salaries[0]
-            for i in range(1, len(self.salaries), 1):
-                current_value = abs(float(self.salaries[i]) - float(fact)) 
-                if min_value > current_value:
-                    min_value = current_value
-                    current_salary = self.salaries[i]
+    def find_parameters(self):
+        performance_value = PrologService.verify_custom('performance(X)', self.ctx_name)
+        if len(performance_value) > 0:
+            print(performance_value)           
+            return {
+                'low': {
+                    'patience': 'increase2x',
+                    'min_delta': 'decrease'
+                },
+                'medium': {
+                    'patience': 'increase',
+                    'min_delta': 'keep'
+                },
+                'high': {
+                    'patience': 'decrease',
+                    'min_delta': 'increase'
+                }
+            }.get(performance_value[0].get('X', 'medium'))
+            
+        
+    
 
-            defined_urgency = 'urgency(salary, {}, {})'.format(current_salary, self.urgency_level)
-            if defined_urgency not in self.urgencies:
-                self.urgencies.append(defined_urgency)
-                #if not PrologService.verify_custom(defined_urgency, self.ctx_name):        
-                PrologService.append_fact(defined_urgency, self.ctx_name)
 
+        
         
 
     @classmethod
@@ -57,6 +67,7 @@ class MetricsCtx(ContextService):
     # //performance(high).  >= 83 < 100    
 
         if type(fact) == list and 'accuracy' in fact[0]:
+            PrologService.retract_all('performance(X)', self.ctx_name)
             PrologService.append_fact(self.parse_metrics(fact), self.ctx_name)
         elif 'operation' in fact:
             PrologService.append_fact(fact, self.ctx_name)
@@ -66,13 +77,12 @@ class MetricsCtx(ContextService):
         # [{'accuracy': 0.8767322301864624, 'loss': 0.2873293161392212}]
         accuracy = round(history[-1]['accuracy']*100)
         self.metrics.append(history[-1])
-        # loss = round(history[0]['loss'])
-        
+        # loss = round(history[0]['loss'])       
         
 
         if accuracy < 60:
             return 'performance(low)'
-        elif accuracy >= 60 and accuracy < 83:
+        elif accuracy >= 60 and accuracy < 92:
             return 'performance(medium)'
         
         return 'performance(high)'            
@@ -85,13 +95,4 @@ class MetricsCtx(ContextService):
 
 
 
-# NegotiationCtx.ctx_name = '_negotiation'
-# # "salary": [7000, 12000, 20000]
-# NegotiationCtx.append_fact('salary(7000)')
-# NegotiationCtx.append_fact('salary(12000)')
-# NegotiationCtx.append_fact('salary(20000)')
-# print(NegotiationCtx.salaries)
-
-# NegotiationCtx.append_fact('avgSalary(7500)')
-
-
+print(MetricsCtx.find_parameters())

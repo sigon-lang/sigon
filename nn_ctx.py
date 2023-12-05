@@ -31,11 +31,16 @@ class NNCtx(ContextService):
     histories_evaluate = [] # contains information about previous training
     histories_training = [] # contains information about previous training
     data_type = 'train' # test or predict    
-    epochs = 10
-    feature_extraction_epochs = 10
+    epochs = 50
+    feature_extraction_epochs = 50
     model_name = "CNN_EMBER"
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
+    delta = 1
+    model_parameters = {
+            'patience': 5,
+            'min_delta': 0
+    }
     
     
     
@@ -48,6 +53,12 @@ class NNCtx(ContextService):
         
         if cls._instance is None:
             cls._instance = super().__new__(cls)
+
+        # set parameters config
+        # cls.model_parameters = {
+        #     'patience': 5,
+        #     'min_delta': 0
+        # }
         
         return cls._instance
 
@@ -72,7 +83,9 @@ class NNCtx(ContextService):
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
         x_test0, y_test0 = self.load_data(config['path'])
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
+
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -92,7 +105,7 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'/models/{self.model_name}-{month}-{mode}.keras' 
+        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
@@ -119,8 +132,10 @@ class NNCtx(ContextService):
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
         x_test0, y_test0 = self.load_data(config['path'])
+
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
         
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=1)
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -176,8 +191,11 @@ class NNCtx(ContextService):
         self.data_type = config.get('data_type', 'train')
         x_train0, y_train0 = self.load_data(config['path'])
 
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+
+
         # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs)
+        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[early_stopping])
         # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
         self.histories_training.append({
@@ -254,11 +272,37 @@ class NNCtx(ContextService):
             'path': fact[fact.find("(")+1:fact.find(")")],
             'model_dir': ''
         }
+    
+    @classmethod
+    def update_parameters(self, fact):
+        
+        patience_action = fact.get('patience', 'keep')
+        # min_delta_action = fact.get('min_delta', 'keep')
+        if patience_action == 'increase':
+            self.model_parameters['patience'] = self.model_parameters['patience']+self.delta
+            return
+        elif patience_action == 'decrease':
+            self.model_parameters['patience'] = self.model_parameters['patience']-self.delta
+            if self.model_parameters['patience'] < 0:
+                self.model_parameters['patience'] = 0
+                return
+        elif patience_action == 'increase2x':        
+            self.model_parameters['patience'] += (2*self.delta)
+        
+
+        
+        # self.model_parameters['min_delta'] = self.model_parameters['patience']+self.delta if patience_action == 'increase' else self.model_parameters['patience']-self.delta
+
+        
 
     @classmethod
     def append_fact(self, fact) -> bool: # can train, test or predict
         # here fact only have a dir to the current data
+        print(fact)
         try:
+            if 'patience' in fact and 'min_delta' in fact:
+                self.update_parameters(fact)
+                return True
 
             if 'setOperation' in fact:
                 self.mode = fact[fact.find("(")+1:fact.find(")")]            

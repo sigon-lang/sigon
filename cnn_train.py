@@ -127,8 +127,11 @@ def run(args):
     # compile model
     model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
 
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, verbose=1, restore_best_weights=True)
+
+
     # fit our model
-    history = model.fit(x_train0, y_train0, validation_split=0.2, epochs=args.epochs)
+    history = model.fit(x_train0, y_train0, validation_split=0.2, epochs=args.epochs, callbacks=[early_stopping])
     # save the model
     model.save(args.model_name)
 
@@ -165,7 +168,7 @@ def run(args):
 if __name__ == '__main__':
     # -load input-arguments
     args = parser.parse_args()
-    args = argparse.Namespace(epochs=10, d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01', model_name="model2018-01-b.h5")
+    args = argparse.Namespace(epochs=50, d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01', model_name="model2018-01-b.h5")
     # -set default-values for certain arguments based on chosen scenario & experiment
     # -run experiment
     run(args)
