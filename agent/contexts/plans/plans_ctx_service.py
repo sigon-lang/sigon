@@ -138,7 +138,8 @@ class PlansContextService (ContextService):
                     # não é muito bom, complexidade muito alta, porém, como na minha tese esse não era meu foco
                     # acabei por ignorar e usar essa versão
                     for action in action_bindings:
-                        act = 'act(' + a.name + '(' + action + '))'                        
+                        act = 'act(' + a.name + '(' + action + '))'  
+                        PlansContextService.remove_all('act(X)') # remove previous selected actions            
                         PlansContextService.append_fact(act) #NOTE é aqui o gargalo
                         # CommunicationContextService.append_fact(a.name + '(' + action + ')')
 
@@ -183,6 +184,10 @@ class PlansContextService (ContextService):
     @classmethod
     def remove(cls, fact):
         return PrologService.retract(fact, cls.ctx_name)
+    
+    @classmethod
+    def remove_all(cls, fact):
+        PrologService.retract_all(fact, cls.ctx_name)
 
     @classmethod
     def format_plan_conditions(cls, conditions):
