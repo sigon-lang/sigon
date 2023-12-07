@@ -62,10 +62,6 @@ class MetricsCtx(ContextService):
 
         print(fact) # can have history from training and history from evaluation        
 
-    #         //performance(low). < 60
-    # //performance(medium).  >= 60 < 83
-    # //performance(high).  >= 83 < 100    
-
         if type(fact) == list and 'accuracy' in fact[0]:
             PrologService.retract_all('performance(X)', self.ctx_name)
             PrologService.append_fact(self.parse_metrics(fact), self.ctx_name)
