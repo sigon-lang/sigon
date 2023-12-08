@@ -7,7 +7,7 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
+from sklearn import preprocessing, model_selection
 import matplotlib.pyplot as plt
 import time
 
@@ -153,14 +153,20 @@ def run(args):
     loss, acc = model.evaluate(x_test0,y_test0)
     print("loss: " + str(loss))
     print("acc: " + str(acc))
+    
+    print("setting old data")
+    
+    new_x_train, new_x_test, new_y_train, new_y_test = model_selection.train_test_split(x_train, y_train, test_size=0.2, stratify=y_train)
 
     model.save('cnn-finetuning18-01v2.h5')
+    
+    
 
 
 if __name__ == '__main__':
     # -load input-arguments
     args = parser.parse_args()
-    args = argparse.Namespace(x_test="X_train.dat", y_test= "y_train.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_name="model2018-01.h5")
+    args = argparse.Namespace(x_test="X_train.dat", y_test= "y_train.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01', model_name="finetuning-only-models/CNN_EMBER-2018-12-fine_tuning.keras")
     # -set default-values for certain arguments based on chosen scenario & experiment
     # -run experiment
     run(args)

@@ -57,9 +57,6 @@ class MetricsCtx(ContextService):
 
     @classmethod
     def append_fact(self, fact) -> bool:       
-        
-
-
         print(fact) # can have history from training and history from evaluation        
 
         if type(fact) == list and 'accuracy' in fact[0]:
@@ -91,4 +88,3 @@ class MetricsCtx(ContextService):
 
 
 
-print(MetricsCtx.find_parameters())
