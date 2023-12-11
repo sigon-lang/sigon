@@ -25,6 +25,11 @@ from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
 
+utils.set_random_seed(123)
+
+
+os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+print(os.getenv('TF_GPU_ALLOCATOR'))
 
 class NNCtx(ContextService):
 
@@ -38,12 +43,10 @@ class NNCtx(ContextService):
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
     delta = 1
-    delta_rate = 0.0025
     model_parameters = {
-            'patience': 5,
+            'patience': 3,
             'min_delta': 0
     }
-    data_path = []
     
     
     
@@ -75,8 +78,8 @@ class NNCtx(ContextService):
         
         return []
     @classmethod
-    def fine_tuning(self, config):
-        print('fine tuning model')
+    def fine_tuning(self, config):        
+            
         self.feature_extraction(config)
         # self.histories.pop() # removing last history that should not be considered
         self.model.trainable = True
@@ -86,10 +89,13 @@ class NNCtx(ContextService):
 
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
-        x_test0, y_test0 = self.load_data(config['path'])
+        if config['proportion']:
+            x_test0, y_test0 = self.load_data_previous_months(config['path']) # path without month
+        else:
+            x_test0, y_test0 = self.load_data(config['path'])
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
-        history = self.model.fit(x_test0, y_test0, validation_split=0.2, epochs=self.epochs, callbacks=[])
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -109,11 +115,10 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
+        return f'finetuning-only-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
-        print('feature extracting model')
         # I can set a config to check if a feature extraction is already available
         if 'model_dir' in config and config['model_dir'] != '':
             base_model= load_model(config['model_dir'])
@@ -136,9 +141,13 @@ class NNCtx(ContextService):
         self.model.summary()
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
-        x_test0, y_test0 = self.load_data(config['path'])
-
-        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
+        
+        
+        if config['proportion']:
+            x_test0, y_test0 = self.load_data_previous_months(config['path'])
+        else:
+            x_test0, y_test0 = self.load_data(config['path'])
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
         
         history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[])
 
@@ -173,7 +182,6 @@ class NNCtx(ContextService):
     
     @classmethod
     def train_model(self, config):
-        print('training model')
 
         self.model = Sequential()
 
@@ -197,11 +205,11 @@ class NNCtx(ContextService):
         self.data_type = config.get('data_type', 'train')
         x_train0, y_train0 = self.load_data(config['path'])
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
 
 
         # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.3, epochs=self.epochs, callbacks=[])
+        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[])
         # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
         self.histories_training.append({
@@ -212,6 +220,7 @@ class NNCtx(ContextService):
 
     @classmethod
     def load_data(self, path):
+        
         x_dat = 'X_' + self.data_type + '.dat'
         y_dat = 'y_' + self.data_type + '.dat'
         x_train = np.memmap(os.path.join(path, x_dat), mode="r+", dtype=np.float32)
@@ -262,6 +271,88 @@ class NNCtx(ContextService):
         x_train0 = np.reshape(x_train0, (len(x_train0), 48, 48, 1))
 
         return x_train0, y_train0
+    
+    @classmethod
+    def load_data_previous_months(self, path):
+        
+        months = ['2018-01','2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11']
+        x_dat = 'X_' + self.data_type + '.dat'
+        y_dat = 'y_' + self.data_type + '.dat'
+        current_moth = 12
+        compiled_x_data = []
+        compiled_y_data = []
+        for m in months:
+            previous_month = int(m.split('-')[1])
+            # rate = (current_moth - previous_month)*0.027
+            rate = 0.3
+            
+            
+        
+            month_path = os.path.join(path, m)
+        
+            x_train = np.memmap(os.path.join(month_path, x_dat), mode="r+", dtype=np.float32)
+            y_train = np.memmap(os.path.join(month_path, y_dat), mode="r+", dtype=np.float32)
+
+
+            y_train = np.memmap(os.path.join(month_path, y_dat), dtype=np.float32, mode="r")
+            N = y_train.shape[0]
+            x_train = np.memmap(os.path.join(month_path, x_dat), dtype=np.float32, mode="r+", shape=(N, 2381))
+
+
+            #make into a dataframe
+            x_train = pd.DataFrame(x_train)
+            y_train = pd.DataFrame(y_train)
+
+            # Combining features and lables of train dataset
+            x_train[2381] = y_train[0]
+            x_train.shape, y_train.shape
+
+            #remove unlabelled rows from the dataframe
+            x_train.drop(x_train[(x_train[2381] == -1)].index, inplace=True)
+            y_train.drop(y_train[(y_train[0] == -1)].index, inplace=True)        
+
+            #reconstructing the X_train dataframe
+            x_train.drop([2381], axis =1, inplace=True)
+            x_train.shape, y_train.shape
+
+            x_train0 = x_train.values
+            y_train0 = y_train.values
+
+            # dimension reduction
+            
+            x_train0 = np.delete(x_train0, np.s_[-77:], axis=1)
+            
+
+            # normalize data for printing (pixels range: [0, 255])
+            min_max_scaler = preprocessing.MinMaxScaler((0, 255), copy=False)
+            x_train0 = min_max_scaler.fit_transform(x_train0)
+
+
+            # reshape the data to consider vectors as images
+            x_train0 = np.reshape(x_train0, (len(x_train0), 48, 48))
+
+
+            x_train0 = x_train0 / 255.0
+
+            # reshpe for CNN
+            x_train0 = np.reshape(x_train0, (len(x_train0), 48, 48, 1))
+            _, x_test0, _, y_test0 = model_selection.train_test_split(x_train0, y_train0, test_size=rate, stratify=y_train0)
+            compiled_x_data.append(x_test0)
+            compiled_y_data.append(y_test0)
+            
+            
+
+        
+        
+        new_x_data = compiled_x_data[0] 
+        new_y_data = compiled_y_data[0] 
+        for idx in range(1, len(compiled_x_data)):
+            new_x_data = np.vstack((new_x_data, compiled_x_data[idx]))
+            new_y_data = np.vstack((new_y_data, compiled_y_data[idx]))
+        
+            
+        return new_x_data, new_y_data
 
 
     def predict(self, config):
@@ -286,14 +377,9 @@ class NNCtx(ContextService):
         # min_delta_action = fact.get('min_delta', 'keep')
         if patience_action == 'increase':
             self.model_parameters['patience'] = self.model_parameters['patience']+self.delta
-            self.model_parameters['min_delta'] -= self.delta_rate 
-            if self.model_parameters['min_delta'] < 0:
-                self.model_parameters['min_delta'] = 0
-            
             return
         elif patience_action == 'decrease':
             self.model_parameters['patience'] = self.model_parameters['patience']-self.delta
-            self.model_parameters['min_delta'] += self.delta_rate
             if self.model_parameters['patience'] < 0:
                 self.model_parameters['patience'] = 0
                 return
@@ -316,14 +402,10 @@ class NNCtx(ContextService):
                 return True
 
             if 'setOperation' in fact:
-                print({
-                    'setOperation': fact
-                })
                 self.mode = fact[fact.find("(")+1:fact.find(")")]            
                 return True
             elif 'execute' in fact:
                 config = self.create_config(fact)
-                print({'config': config})
                 operations = {
                     'test': self.test_model,
                     'train': self.train_model,
@@ -331,12 +413,11 @@ class NNCtx(ContextService):
                     'featureExtraction': self.feature_extraction,
                     'predict': self.predict
                 }
+                print(config['mode'])
                 operations[config.get('mode', 'test')](config)
                 # test the model after train, fine_tuning or FE
-                # if config['mode'] != 'test' and config['mode'] != 'predict':
-                #     self.test_model(config)
-                
-                self.mode = ''
+                if config['mode'] != 'test' and config['mode'] != 'predict':
+                    self.test_model(config)
                 return True
 
             return False
@@ -362,12 +443,6 @@ class NNCtx(ContextService):
     @classmethod
     def reset(cls):
         cls._instance = None
-
-
-
-            
-
-
 
     
 # TEST - OK
@@ -412,13 +487,100 @@ class NNCtx(ContextService):
 # # OK
 # # NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 
-# NNCtx.data_type = 'train'
+NNCtx.data_type = 'train'
 
 # NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
+months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11', '2018-12']
+    
+start_time = time.time()
 
 
+
+# config = {
+#            'mode': 'fineTuning',
+#                 'month': '2018-12',
+#                 'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/',
+#                 'model_dir': 'nn-models/CNN_EMBER-2018-12-feature_extraction.keras',
+#                 'proportion': True
+# }
+# start_time = time.time()
+
+
+        
+# NNCtx.fine_tuning(config)
+
+# result = time.time() - start_time
+# print(result)
+
+
+
+# if i train final network with proportion from previous months, whats the result?
+
+# for m in months:    
+
+#     config = {
+#                 'mode': 'fineTuning',
+#                 'month': '2018-11',
+#                 'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+m,
+#                 'model_dir': 'finetuning-only-models/CNN_EMBER-2018-11-fine_tuning.keras',
+#                 'proportion': False
+#             }
+
+#     NNCtx.test_model(config)
+
+
+#     # NNCtx.data_path.append('/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01')
+
+
+#     # x_train, y_train = NNCtx.load_data(NNCtx.data_path[-1])
+
+#     # new_x_train, new_x_test, new_y_train, new_y_test = model_selection.train_test_split(x_train, y_train, test_size=0.2, stratify=y_train)
+
+#     config['proportion'] = True
+
+#     NNCtx.fine_tuning(config)
+
+#     NNCtx.test_model(config)
+        
+        
+        
+    
+for month in months:
+        config = {
+            'mode': 'fineTuning',
+            'month': month,
+            'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
+            'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras',
+            'proportion': False
+        }
+        NNCtx.fine_tuning(config)
+        # NNCtx.test_model(config)
+
+    
+print({
+        'histories_evaluate': NNCtx.histories_evaluate,
+        'histories_training': NNCtx.histories_training
+    })
+
+
+result = time.time() - start_time    
+
+print(result)
+            
+
+# NNCtx.data_path.append('/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01')
+
+
+# x_train, y_train = NNCtx.load_data(NNCtx.data_path[-1])
+
+# new_x_train, new_x_test, new_y_train, new_y_test = model_selection.train_test_split(x_train, y_train, test_size=0.2, stratify=y_train)
+
+# # ir concatenando os meses anteriores
+
+# NNCtx.load_data('/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02')
 
 
 # OK

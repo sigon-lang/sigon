@@ -16,11 +16,12 @@ from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Input, UpSampling
 
 
 
-from keras import optimizers
+from keras import optimizers, utils
 from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
 
+utils.set_random_seed(812)
 
 parser = argparse.ArgumentParser('./main.py', description='Run individual continual learning experiment.')
 parser.add_argument('--data-dir', type=str, default='./datasets', dest='d_dir', help="default: %(default)s")
@@ -135,34 +136,9 @@ def run(args):
     # save the model
     model.save(args.model_name)
 
-    # Extract the relevant data
-    train_loss = history.history['loss']
-    val_loss = history.history['val_loss']
-    train_accuracy = history.history['accuracy']
-    val_accuracy = history.history['val_accuracy']
+    
 
-    # Plot the learning curves for loss
-    plt.figure(figsize=(15, 5))
-    plt.subplot(1, 2, 1)
-    plt.plot(train_loss, label='Training Loss')
-    plt.plot(val_loss, label='Validation Loss')
-    plt.legend()
-    plt.title("Model Loss", fontsize=14)
-    plt.xlabel('Epoch')
-    plt.ylabel('Loss')
-
-    # Plot the learning curves for accuracy
-    plt.subplot(1, 2, 2)
-    plt.plot(train_accuracy, label='Training Accuracy')
-    plt.plot(val_accuracy, label='Validation Accuracy')
-    plt.legend()
-    plt.title("Model Accuracy", fontsize=14)
-    plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-
-    plt.tight_layout()
-
-    plt.show()
+    
 
 
 if __name__ == '__main__':

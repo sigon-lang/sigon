@@ -11,7 +11,7 @@ import time
 import numpy as np 
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, model_selection
+from sklearn import preprocessing
 import matplotlib.pyplot as plt
 
 
@@ -25,6 +25,10 @@ from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
 
+os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+print(os.getenv('TF_GPU_ALLOCATOR'))
+
+utils.set_random_seed(123)
 
 class NNCtx(ContextService):
 
@@ -38,12 +42,10 @@ class NNCtx(ContextService):
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
     delta = 1
-    delta_rate = 0.0025
     model_parameters = {
-            'patience': 5,
+            'patience': 3,
             'min_delta': 0
     }
-    data_path = []
     
     
     
@@ -76,7 +78,6 @@ class NNCtx(ContextService):
         return []
     @classmethod
     def fine_tuning(self, config):
-        print('fine tuning model')
         self.feature_extraction(config)
         # self.histories.pop() # removing last history that should not be considered
         self.model.trainable = True
@@ -88,8 +89,8 @@ class NNCtx(ContextService):
         self.data_type = config.get('data_type', 'train')
         x_test0, y_test0 = self.load_data(config['path'])
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
-        history = self.model.fit(x_test0, y_test0, validation_split=0.2, epochs=self.epochs, callbacks=[])
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -109,11 +110,10 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
+        return f'train-only-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
-        print('feature extracting model')
         # I can set a config to check if a feature extraction is already available
         if 'model_dir' in config and config['model_dir'] != '':
             base_model= load_model(config['model_dir'])
@@ -138,7 +138,7 @@ class NNCtx(ContextService):
         self.data_type = config.get('data_type', 'train')
         x_test0, y_test0 = self.load_data(config['path'])
 
-        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
         
         history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[])
 
@@ -173,7 +173,6 @@ class NNCtx(ContextService):
     
     @classmethod
     def train_model(self, config):
-        print('training model')
 
         self.model = Sequential()
 
@@ -197,11 +196,11 @@ class NNCtx(ContextService):
         self.data_type = config.get('data_type', 'train')
         x_train0, y_train0 = self.load_data(config['path'])
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
 
 
         # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.3, epochs=self.epochs, callbacks=[])
+        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[])
         # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
         self.histories_training.append({
@@ -286,14 +285,9 @@ class NNCtx(ContextService):
         # min_delta_action = fact.get('min_delta', 'keep')
         if patience_action == 'increase':
             self.model_parameters['patience'] = self.model_parameters['patience']+self.delta
-            self.model_parameters['min_delta'] -= self.delta_rate 
-            if self.model_parameters['min_delta'] < 0:
-                self.model_parameters['min_delta'] = 0
-            
             return
         elif patience_action == 'decrease':
             self.model_parameters['patience'] = self.model_parameters['patience']-self.delta
-            self.model_parameters['min_delta'] += self.delta_rate
             if self.model_parameters['patience'] < 0:
                 self.model_parameters['patience'] = 0
                 return
@@ -316,14 +310,10 @@ class NNCtx(ContextService):
                 return True
 
             if 'setOperation' in fact:
-                print({
-                    'setOperation': fact
-                })
                 self.mode = fact[fact.find("(")+1:fact.find(")")]            
                 return True
             elif 'execute' in fact:
                 config = self.create_config(fact)
-                print({'config': config})
                 operations = {
                     'test': self.test_model,
                     'train': self.train_model,
@@ -331,12 +321,11 @@ class NNCtx(ContextService):
                     'featureExtraction': self.feature_extraction,
                     'predict': self.predict
                 }
+                print(config['mode'])
                 operations[config.get('mode', 'test')](config)
                 # test the model after train, fine_tuning or FE
-                # if config['mode'] != 'test' and config['mode'] != 'predict':
-                #     self.test_model(config)
-                
-                self.mode = ''
+                if config['mode'] != 'test' and config['mode'] != 'predict':
+                    self.test_model(config)
                 return True
 
             return False
@@ -362,12 +351,6 @@ class NNCtx(ContextService):
     @classmethod
     def reset(cls):
         cls._instance = None
-
-
-
-            
-
-
 
     
 # TEST - OK
@@ -412,13 +395,41 @@ class NNCtx(ContextService):
 # # OK
 # # NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 
-# NNCtx.data_type = 'train'
+NNCtx.data_type = 'train'
 
 # NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
+months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11', '2018-12']
+    
+start_time = time.time()
+        
+        
+        
+    
+for month in months:
+        config = {
+            'mode': 'train',
+            'month': month,
+            'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
+            'model_dir': ''
+        }
+        print(month)
+        NNCtx.train_model(config)
+        # NNCtx.test_model(config)
+
+    
+print({
+        'histories_evaluate': NNCtx.histories_evaluate,
+        'histories_training': NNCtx.histories_training
+    })
 
 
+result = time.time() - start_time    
+
+print(result)
+            
 
 
 # OK

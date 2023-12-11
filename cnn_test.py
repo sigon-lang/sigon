@@ -105,16 +105,16 @@ if __name__ == '__main__':
     # -load input-arguments
     
     
-    # months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
-    #           '2018-10', '2018-11', '2018-12']
-    months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05']
+    months = ['2018-01','2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11', '2018-12']
+
     
     
     
     for month in months:
     
         args = parser.parse_args()
-        args = argparse.Namespace(x_test="X_test.dat", y_test= "y_test.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month, model_name="CNN_EMBER-2018-05-fine_tuning.keras")
+        args = argparse.Namespace(x_test="X_test.dat", y_test= "y_test.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month, model_name="train-only-models/CNN_EMBER-2018-12-train.keras")
         # -set default-values for certain arguments based on chosen scenario & experiment
         # -run experiment
         run(args)

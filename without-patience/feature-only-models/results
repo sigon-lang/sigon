@@ -1,0 +1,592 @@
+2023-12-07 08:45:17.562033: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2023-12-07 08:45:17.580704: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2023-12-07 08:45:17.580726: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2023-12-07 08:45:17.581283: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-12-07 08:45:17.584122: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-12-07 08:45:18.490412: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-12-07 08:45:19.251527: I external/local_xla/xla/stream_executor/cuda/cuda_executor.cc:901] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-12-07 08:45:19.602239: W tensorflow/core/common_runtime/gpu/gpu_device.cc:2256] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+Model: "model_1"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_1 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model (Functional)          (None, 400)               3573648   
+                                                                 
+ dropout (Dropout)           (None, 400)               0         
+                                                                 
+ dense (Dense)               (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.4149 - accuracy: 0.8088 - val_loss: 0.3485 - val_accuracy: 0.8480
+Epoch 2/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3607 - accuracy: 0.8389 - val_loss: 0.3370 - val_accuracy: 0.8524
+Epoch 3/30
+1185/1185 [==============================] - 10s 8ms/step - loss: 0.3532 - accuracy: 0.8430 - val_loss: 0.3333 - val_accuracy: 0.8554
+Epoch 4/30
+1185/1185 [==============================] - 10s 8ms/step - loss: 0.3497 - accuracy: 0.8431 - val_loss: 0.3293 - val_accuracy: 0.8546
+Epoch 5/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3495 - accuracy: 0.8433 - val_loss: 0.3286 - val_accuracy: 0.8609
+Epoch 6/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3478 - accuracy: 0.8445 - val_loss: 0.3261 - val_accuracy: 0.8591
+Epoch 7/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3481 - accuracy: 0.8441 - val_loss: 0.3258 - val_accuracy: 0.8566
+Epoch 8/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3480 - accuracy: 0.8436 - val_loss: 0.3261 - val_accuracy: 0.8593
+Epoch 9/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3491 - accuracy: 0.8441 - val_loss: 0.3250 - val_accuracy: 0.8597
+Epoch 10/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3479 - accuracy: 0.8445 - val_loss: 0.3241 - val_accuracy: 0.8596
+Epoch 11/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3498 - accuracy: 0.8439 - val_loss: 0.3232 - val_accuracy: 0.8601
+Epoch 12/30
+1185/1185 [==============================] - 10s 9ms/step - loss: 0.3465 - accuracy: 0.8455 - val_loss: 0.3229 - val_accuracy: 0.8562
+Epoch 13/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3473 - accuracy: 0.8451 - val_loss: 0.3239 - val_accuracy: 0.8605
+Epoch 14/30
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3475 - accuracy: 0.8442 - val_loss: 0.3232 - val_accuracy: 0.8607
+Epoch 15/30
+1179/1185 [============================>.] - ETA: 0s - loss: 0.3473 - accuracy: 0.8455Restoring model weights from the end of the best epoch: 12.
+1185/1185 [==============================] - 11s 9ms/step - loss: 0.3474 - accuracy: 0.8456 - val_loss: 0.3245 - val_accuracy: 0.8609
+Epoch 15: early stopping
+{'accuracy': 0.8455733060836792, 'loss': 0.3473835587501526}
+1692/1692 [==============================] - 11s 6ms/step - loss: 2.3435 - accuracy: 0.5561
+Model: "model_3"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_2 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_2 (Functional)        (None, 400)               3573648   
+                                                                 
+ dropout_1 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_1 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.4278 - accuracy: 0.7889 - val_loss: 0.3918 - val_accuracy: 0.8093
+Epoch 2/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3887 - accuracy: 0.8116 - val_loss: 0.3785 - val_accuracy: 0.8218
+Epoch 3/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3842 - accuracy: 0.8174 - val_loss: 0.3726 - val_accuracy: 0.8249
+Epoch 4/30
+909/909 [==============================] - 8s 8ms/step - loss: 0.3825 - accuracy: 0.8197 - val_loss: 0.3697 - val_accuracy: 0.8353
+Epoch 5/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3802 - accuracy: 0.8187 - val_loss: 0.3675 - val_accuracy: 0.8360
+Epoch 6/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3807 - accuracy: 0.8199 - val_loss: 0.3670 - val_accuracy: 0.8389
+Epoch 7/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3807 - accuracy: 0.8229 - val_loss: 0.3671 - val_accuracy: 0.8350
+Epoch 8/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3801 - accuracy: 0.8239 - val_loss: 0.3660 - val_accuracy: 0.8383
+Epoch 9/30
+909/909 [==============================] - 8s 8ms/step - loss: 0.3804 - accuracy: 0.8225 - val_loss: 0.3676 - val_accuracy: 0.8333
+Epoch 10/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3776 - accuracy: 0.8225 - val_loss: 0.3643 - val_accuracy: 0.8400
+Epoch 11/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3786 - accuracy: 0.8236 - val_loss: 0.3633 - val_accuracy: 0.8398
+Epoch 12/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3799 - accuracy: 0.8215 - val_loss: 0.3644 - val_accuracy: 0.8407
+Epoch 13/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3767 - accuracy: 0.8252 - val_loss: 0.3632 - val_accuracy: 0.8407
+Epoch 14/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3763 - accuracy: 0.8247 - val_loss: 0.3630 - val_accuracy: 0.8407
+Epoch 15/30
+909/909 [==============================] - 8s 8ms/step - loss: 0.3793 - accuracy: 0.8226 - val_loss: 0.3633 - val_accuracy: 0.8381
+Epoch 16/30
+909/909 [==============================] - 8s 9ms/step - loss: 0.3781 - accuracy: 0.8217 - val_loss: 0.3647 - val_accuracy: 0.8372
+Epoch 17/30
+905/909 [============================>.] - ETA: 0s - loss: 0.3770 - accuracy: 0.8244Restoring model weights from the end of the best epoch: 14.
+909/909 [==============================] - 8s 9ms/step - loss: 0.3771 - accuracy: 0.8244 - val_loss: 0.3637 - val_accuracy: 0.8380
+Epoch 17: early stopping
+{'accuracy': 0.8244056701660156, 'loss': 0.37707075476646423}
+1298/1298 [==============================] - 8s 6ms/step - loss: 0.9969 - accuracy: 0.7653
+Model: "model_5"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_3 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_4 (Functional)        (None, 400)               3573648   
+                                                                 
+ dropout_2 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_2 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1140/1140 [==============================] - 11s 9ms/step - loss: 0.3486 - accuracy: 0.8464 - val_loss: 0.2936 - val_accuracy: 0.8701
+Epoch 2/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.3016 - accuracy: 0.8660 - val_loss: 0.2827 - val_accuracy: 0.8734
+Epoch 3/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2950 - accuracy: 0.8673 - val_loss: 0.2781 - val_accuracy: 0.8738
+Epoch 4/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2912 - accuracy: 0.8674 - val_loss: 0.2760 - val_accuracy: 0.8742
+Epoch 5/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2904 - accuracy: 0.8687 - val_loss: 0.2747 - val_accuracy: 0.8736
+Epoch 6/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2902 - accuracy: 0.8694 - val_loss: 0.2730 - val_accuracy: 0.8750
+Epoch 7/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2897 - accuracy: 0.8694 - val_loss: 0.2719 - val_accuracy: 0.8757
+Epoch 8/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2885 - accuracy: 0.8694 - val_loss: 0.2718 - val_accuracy: 0.8747
+Epoch 9/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2887 - accuracy: 0.8690 - val_loss: 0.2712 - val_accuracy: 0.8761
+Epoch 10/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2885 - accuracy: 0.8706 - val_loss: 0.2708 - val_accuracy: 0.8759
+Epoch 11/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2877 - accuracy: 0.8703 - val_loss: 0.2704 - val_accuracy: 0.8762
+Epoch 12/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2876 - accuracy: 0.8722 - val_loss: 0.2702 - val_accuracy: 0.8766
+Epoch 13/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2884 - accuracy: 0.8712 - val_loss: 0.2708 - val_accuracy: 0.8766
+Epoch 14/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2871 - accuracy: 0.8706 - val_loss: 0.2699 - val_accuracy: 0.8761
+Epoch 15/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2890 - accuracy: 0.8703 - val_loss: 0.2695 - val_accuracy: 0.8772
+Epoch 16/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2880 - accuracy: 0.8708 - val_loss: 0.2703 - val_accuracy: 0.8777
+Epoch 17/30
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2886 - accuracy: 0.8709 - val_loss: 0.2703 - val_accuracy: 0.8765
+Epoch 18/30
+1133/1140 [============================>.] - ETA: 0s - loss: 0.2868 - accuracy: 0.8716Restoring model weights from the end of the best epoch: 15.
+1140/1140 [==============================] - 10s 9ms/step - loss: 0.2867 - accuracy: 0.8715 - val_loss: 0.2700 - val_accuracy: 0.8780
+Epoch 18: early stopping
+{'accuracy': 0.8714924454689026, 'loss': 0.286653995513916}
+1628/1628 [==============================] - 10s 6ms/step - loss: 1.6537 - accuracy: 0.7413
+Model: "model_7"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_4 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_6 (Functional)        (None, 400)               3573648   
+                                                                 
+ dropout_3 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_3 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3708 - accuracy: 0.8289 - val_loss: 0.3110 - val_accuracy: 0.8628
+Epoch 2/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3201 - accuracy: 0.8573 - val_loss: 0.2988 - val_accuracy: 0.8695
+Epoch 3/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3166 - accuracy: 0.8594 - val_loss: 0.2955 - val_accuracy: 0.8709
+Epoch 4/30
+1005/1005 [==============================] - 9s 8ms/step - loss: 0.3127 - accuracy: 0.8626 - val_loss: 0.2934 - val_accuracy: 0.8706
+Epoch 5/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3139 - accuracy: 0.8604 - val_loss: 0.2914 - val_accuracy: 0.8721
+Epoch 6/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3102 - accuracy: 0.8655 - val_loss: 0.2895 - val_accuracy: 0.8732
+Epoch 7/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3091 - accuracy: 0.8649 - val_loss: 0.2884 - val_accuracy: 0.8733
+Epoch 8/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3100 - accuracy: 0.8633 - val_loss: 0.2887 - val_accuracy: 0.8735
+Epoch 9/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3097 - accuracy: 0.8612 - val_loss: 0.2881 - val_accuracy: 0.8729
+Epoch 10/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3106 - accuracy: 0.8628 - val_loss: 0.2882 - val_accuracy: 0.8731
+Epoch 11/30
+1005/1005 [==============================] - 9s 8ms/step - loss: 0.3087 - accuracy: 0.8640 - val_loss: 0.2882 - val_accuracy: 0.8751
+Epoch 12/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3080 - accuracy: 0.8651 - val_loss: 0.2874 - val_accuracy: 0.8732
+Epoch 13/30
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3110 - accuracy: 0.8628 - val_loss: 0.2895 - val_accuracy: 0.8724
+Epoch 14/30
+1005/1005 [==============================] - 10s 9ms/step - loss: 0.3081 - accuracy: 0.8649 - val_loss: 0.2875 - val_accuracy: 0.8740
+Epoch 15/30
+1004/1005 [============================>.] - ETA: 0s - loss: 0.3074 - accuracy: 0.8643Restoring model weights from the end of the best epoch: 12.
+1005/1005 [==============================] - 9s 9ms/step - loss: 0.3074 - accuracy: 0.8644 - val_loss: 0.2881 - val_accuracy: 0.8761
+Epoch 15: early stopping
+{'accuracy': 0.8643661737442017, 'loss': 0.3073873817920685}
+1435/1435 [==============================] - 10s 7ms/step - loss: 1.0492 - accuracy: 0.6892
+Model: "model_9"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_5 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_8 (Functional)        (None, 400)               3573648   
+                                                                 
+ dropout_4 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_4 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1059/1059 [==============================] - 10s 9ms/step - loss: 0.4312 - accuracy: 0.8060 - val_loss: 0.3850 - val_accuracy: 0.8337
+Epoch 2/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3880 - accuracy: 0.8316 - val_loss: 0.3710 - val_accuracy: 0.8397
+Epoch 3/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3817 - accuracy: 0.8328 - val_loss: 0.3684 - val_accuracy: 0.8438
+Epoch 4/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3818 - accuracy: 0.8323 - val_loss: 0.3647 - val_accuracy: 0.8442
+Epoch 5/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3773 - accuracy: 0.8349 - val_loss: 0.3615 - val_accuracy: 0.8437
+Epoch 6/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3774 - accuracy: 0.8349 - val_loss: 0.3599 - val_accuracy: 0.8460
+Epoch 7/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3741 - accuracy: 0.8360 - val_loss: 0.3587 - val_accuracy: 0.8453
+Epoch 8/30
+1059/1059 [==============================] - 10s 9ms/step - loss: 0.3737 - accuracy: 0.8354 - val_loss: 0.3582 - val_accuracy: 0.8466
+Epoch 9/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3748 - accuracy: 0.8370 - val_loss: 0.3570 - val_accuracy: 0.8452
+Epoch 10/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3749 - accuracy: 0.8355 - val_loss: 0.3586 - val_accuracy: 0.8466
+Epoch 11/30
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3751 - accuracy: 0.8356 - val_loss: 0.3571 - val_accuracy: 0.8468
+Epoch 12/30
+1052/1059 [============================>.] - ETA: 0s - loss: 0.3725 - accuracy: 0.8365Restoring model weights from the end of the best epoch: 9.
+1059/1059 [==============================] - 9s 9ms/step - loss: 0.3726 - accuracy: 0.8363 - val_loss: 0.3575 - val_accuracy: 0.8434
+Epoch 12: early stopping
+{'accuracy': 0.8363046050071716, 'loss': 0.3725540041923523}
+1513/1513 [==============================] - 10s 6ms/step - loss: 1.4757 - accuracy: 0.5983
+Model: "model_11"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_6 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_10 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_5 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_5 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3730 - accuracy: 0.8374 - val_loss: 0.3087 - val_accuracy: 0.8798
+Epoch 2/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3264 - accuracy: 0.8658 - val_loss: 0.2945 - val_accuracy: 0.8805
+Epoch 3/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3175 - accuracy: 0.8691 - val_loss: 0.2877 - val_accuracy: 0.8899
+Epoch 4/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3162 - accuracy: 0.8704 - val_loss: 0.2843 - val_accuracy: 0.8893
+Epoch 5/30
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3149 - accuracy: 0.8705 - val_loss: 0.2834 - val_accuracy: 0.8902
+Epoch 6/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3121 - accuracy: 0.8724 - val_loss: 0.2817 - val_accuracy: 0.8896
+Epoch 7/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3099 - accuracy: 0.8727 - val_loss: 0.2825 - val_accuracy: 0.8888
+Epoch 8/30
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3144 - accuracy: 0.8708 - val_loss: 0.2799 - val_accuracy: 0.8896
+Epoch 9/30
+1125/1125 [==============================] - 10s 9ms/step - loss: 0.3136 - accuracy: 0.8708 - val_loss: 0.2792 - val_accuracy: 0.8889
+Epoch 10/30
+1125/1125 [==============================] - 10s 8ms/step - loss: 0.3102 - accuracy: 0.8732 - val_loss: 0.2786 - val_accuracy: 0.8908
+Epoch 11/30
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3122 - accuracy: 0.8714 - val_loss: 0.2784 - val_accuracy: 0.8896
+Epoch 12/30
+1125/1125 [==============================] - 10s 8ms/step - loss: 0.3110 - accuracy: 0.8732 - val_loss: 0.2782 - val_accuracy: 0.8901
+Epoch 13/30
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3113 - accuracy: 0.8735 - val_loss: 0.2787 - val_accuracy: 0.8905
+Epoch 14/30
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3116 - accuracy: 0.8728 - val_loss: 0.2797 - val_accuracy: 0.8878
+Epoch 15/30
+1119/1125 [============================>.] - ETA: 0s - loss: 0.3134 - accuracy: 0.8711Restoring model weights from the end of the best epoch: 12.
+1125/1125 [==============================] - 9s 8ms/step - loss: 0.3138 - accuracy: 0.8711 - val_loss: 0.2785 - val_accuracy: 0.8914
+Epoch 15: early stopping
+{'accuracy': 0.8710896372795105, 'loss': 0.31380748748779297}
+1607/1607 [==============================] - 10s 6ms/step - loss: 2.6471 - accuracy: 0.5942
+Model: "model_13"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_7 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_12 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_6 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_6 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.4144 - accuracy: 0.8069 - val_loss: 0.3543 - val_accuracy: 0.8451
+Epoch 2/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3629 - accuracy: 0.8375 - val_loss: 0.3429 - val_accuracy: 0.8515
+Epoch 3/30
+994/994 [==============================] - 8s 8ms/step - loss: 0.3568 - accuracy: 0.8414 - val_loss: 0.3398 - val_accuracy: 0.8468
+Epoch 4/30
+994/994 [==============================] - 8s 8ms/step - loss: 0.3554 - accuracy: 0.8416 - val_loss: 0.3356 - val_accuracy: 0.8538
+Epoch 5/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3543 - accuracy: 0.8416 - val_loss: 0.3341 - val_accuracy: 0.8574
+Epoch 6/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3496 - accuracy: 0.8425 - val_loss: 0.3321 - val_accuracy: 0.8549
+Epoch 7/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3501 - accuracy: 0.8439 - val_loss: 0.3309 - val_accuracy: 0.8569
+Epoch 8/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3485 - accuracy: 0.8442 - val_loss: 0.3304 - val_accuracy: 0.8565
+Epoch 9/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3492 - accuracy: 0.8445 - val_loss: 0.3299 - val_accuracy: 0.8572
+Epoch 10/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3502 - accuracy: 0.8433 - val_loss: 0.3307 - val_accuracy: 0.8554
+Epoch 11/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3509 - accuracy: 0.8416 - val_loss: 0.3293 - val_accuracy: 0.8571
+Epoch 12/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3495 - accuracy: 0.8425 - val_loss: 0.3296 - val_accuracy: 0.8563
+Epoch 13/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3470 - accuracy: 0.8440 - val_loss: 0.3287 - val_accuracy: 0.8574
+Epoch 14/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3527 - accuracy: 0.8424 - val_loss: 0.3291 - val_accuracy: 0.8593
+Epoch 15/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3480 - accuracy: 0.8433 - val_loss: 0.3304 - val_accuracy: 0.8583
+Epoch 16/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3477 - accuracy: 0.8439 - val_loss: 0.3285 - val_accuracy: 0.8585
+Epoch 17/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3466 - accuracy: 0.8439 - val_loss: 0.3280 - val_accuracy: 0.8587
+Epoch 18/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3466 - accuracy: 0.8454 - val_loss: 0.3284 - val_accuracy: 0.8593
+Epoch 19/30
+994/994 [==============================] - 9s 9ms/step - loss: 0.3464 - accuracy: 0.8446 - val_loss: 0.3282 - val_accuracy: 0.8586
+Epoch 20/30
+994/994 [==============================] - ETA: 0s - loss: 0.3464 - accuracy: 0.8433Restoring model weights from the end of the best epoch: 17.
+994/994 [==============================] - 8s 9ms/step - loss: 0.3464 - accuracy: 0.8433 - val_loss: 0.3285 - val_accuracy: 0.8587
+Epoch 20: early stopping
+{'accuracy': 0.8433185815811157, 'loss': 0.3464279770851135}
+1420/1420 [==============================] - 9s 6ms/step - loss: 1.1582 - accuracy: 0.6235
+Model: "model_15"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_8 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_14 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_7 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_7 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.4447 - accuracy: 0.7928 - val_loss: 0.3923 - val_accuracy: 0.8366
+Epoch 2/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3993 - accuracy: 0.8248 - val_loss: 0.3753 - val_accuracy: 0.8483
+Epoch 3/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3887 - accuracy: 0.8310 - val_loss: 0.3686 - val_accuracy: 0.8493
+Epoch 4/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3876 - accuracy: 0.8311 - val_loss: 0.3652 - val_accuracy: 0.8462
+Epoch 5/30
+1374/1374 [==============================] - 12s 8ms/step - loss: 0.3888 - accuracy: 0.8313 - val_loss: 0.3653 - val_accuracy: 0.8464
+Epoch 6/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3897 - accuracy: 0.8324 - val_loss: 0.3640 - val_accuracy: 0.8475
+Epoch 7/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3874 - accuracy: 0.8328 - val_loss: 0.3625 - val_accuracy: 0.8470
+Epoch 8/30
+1374/1374 [==============================] - 12s 9ms/step - loss: 0.3838 - accuracy: 0.8334 - val_loss: 0.3622 - val_accuracy: 0.8489
+Epoch 9/30
+1374/1374 [==============================] - 12s 8ms/step - loss: 0.3879 - accuracy: 0.8324 - val_loss: 0.3626 - val_accuracy: 0.8491
+Epoch 10/30
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3863 - accuracy: 0.8330 - val_loss: 0.3621 - val_accuracy: 0.8497
+Epoch 11/30
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3863 - accuracy: 0.8329 - val_loss: 0.3618 - val_accuracy: 0.8496
+Epoch 12/30
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3856 - accuracy: 0.8323 - val_loss: 0.3620 - val_accuracy: 0.8467
+Epoch 13/30
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3850 - accuracy: 0.8310 - val_loss: 0.3608 - val_accuracy: 0.8502
+Epoch 14/30
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3869 - accuracy: 0.8301 - val_loss: 0.3635 - val_accuracy: 0.8498
+Epoch 15/30
+1374/1374 [==============================] - 12s 8ms/step - loss: 0.3835 - accuracy: 0.8340 - val_loss: 0.3630 - val_accuracy: 0.8495
+Epoch 16/30
+1372/1374 [============================>.] - ETA: 0s - loss: 0.3838 - accuracy: 0.8324Restoring model weights from the end of the best epoch: 13.
+1374/1374 [==============================] - 11s 8ms/step - loss: 0.3837 - accuracy: 0.8325 - val_loss: 0.3630 - val_accuracy: 0.8451
+Epoch 16: early stopping
+{'accuracy': 0.8324912190437317, 'loss': 0.38373634219169617}
+1962/1962 [==============================] - 11s 6ms/step - loss: 1.6719 - accuracy: 0.5982
+Model: "model_17"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_9 (InputLayer)        [(None, 48, 48, 1)]       0         
+                                                                 
+ model_16 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_8 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_8 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.4295 - accuracy: 0.8072 - val_loss: 0.3455 - val_accuracy: 0.8520
+Epoch 2/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3720 - accuracy: 0.8392 - val_loss: 0.3290 - val_accuracy: 0.8580
+Epoch 3/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3623 - accuracy: 0.8432 - val_loss: 0.3228 - val_accuracy: 0.8578
+Epoch 4/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3584 - accuracy: 0.8448 - val_loss: 0.3177 - val_accuracy: 0.8594
+Epoch 5/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3596 - accuracy: 0.8441 - val_loss: 0.3166 - val_accuracy: 0.8600
+Epoch 6/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3570 - accuracy: 0.8463 - val_loss: 0.3158 - val_accuracy: 0.8603
+Epoch 7/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3564 - accuracy: 0.8466 - val_loss: 0.3147 - val_accuracy: 0.8603
+Epoch 8/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3561 - accuracy: 0.8471 - val_loss: 0.3166 - val_accuracy: 0.8593
+Epoch 9/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3576 - accuracy: 0.8452 - val_loss: 0.3153 - val_accuracy: 0.8613
+Epoch 10/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3562 - accuracy: 0.8482 - val_loss: 0.3145 - val_accuracy: 0.8595
+Epoch 11/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3575 - accuracy: 0.8462 - val_loss: 0.3134 - val_accuracy: 0.8707
+Epoch 12/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3552 - accuracy: 0.8478 - val_loss: 0.3129 - val_accuracy: 0.8692
+Epoch 13/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3559 - accuracy: 0.8481 - val_loss: 0.3131 - val_accuracy: 0.8613
+Epoch 14/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3570 - accuracy: 0.8470 - val_loss: 0.3129 - val_accuracy: 0.8623
+Epoch 15/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3553 - accuracy: 0.8471 - val_loss: 0.3136 - val_accuracy: 0.8612
+Epoch 16/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3562 - accuracy: 0.8472 - val_loss: 0.3124 - val_accuracy: 0.8603
+Epoch 17/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3589 - accuracy: 0.8468 - val_loss: 0.3136 - val_accuracy: 0.8604
+Epoch 18/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3566 - accuracy: 0.8463 - val_loss: 0.3108 - val_accuracy: 0.8697
+Epoch 19/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3553 - accuracy: 0.8473 - val_loss: 0.3111 - val_accuracy: 0.8698
+Epoch 20/30
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3572 - accuracy: 0.8480 - val_loss: 0.3116 - val_accuracy: 0.8703
+Epoch 21/30
+1890/1891 [============================>.] - ETA: 0s - loss: 0.3554 - accuracy: 0.8481Restoring model weights from the end of the best epoch: 18.
+1891/1891 [==============================] - 16s 8ms/step - loss: 0.3554 - accuracy: 0.8482 - val_loss: 0.3113 - val_accuracy: 0.8620
+Epoch 21: early stopping
+{'accuracy': 0.8481541872024536, 'loss': 0.3553897440433502}
+2701/2701 [==============================] - 16s 6ms/step - loss: 2.0030 - accuracy: 0.4718
+Model: "model_19"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_10 (InputLayer)       [(None, 48, 48, 1)]       0         
+                                                                 
+ model_18 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_9 (Dropout)         (None, 400)               0         
+                                                                 
+ dense_9 (Dense)             (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+2188/2188 [==============================] - 19s 8ms/step - loss: 0.4336 - accuracy: 0.8066 - val_loss: 0.3738 - val_accuracy: 0.8433
+Epoch 2/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3968 - accuracy: 0.8300 - val_loss: 0.3629 - val_accuracy: 0.8453
+Epoch 3/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3920 - accuracy: 0.8332 - val_loss: 0.3586 - val_accuracy: 0.8490
+Epoch 4/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3906 - accuracy: 0.8329 - val_loss: 0.3567 - val_accuracy: 0.8489
+Epoch 5/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3876 - accuracy: 0.8342 - val_loss: 0.3537 - val_accuracy: 0.8502
+Epoch 6/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3872 - accuracy: 0.8347 - val_loss: 0.3551 - val_accuracy: 0.8514
+Epoch 7/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3870 - accuracy: 0.8337 - val_loss: 0.3532 - val_accuracy: 0.8491
+Epoch 8/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3872 - accuracy: 0.8355 - val_loss: 0.3517 - val_accuracy: 0.8482
+Epoch 9/30
+2188/2188 [==============================] - 19s 8ms/step - loss: 0.3872 - accuracy: 0.8355 - val_loss: 0.3531 - val_accuracy: 0.8522
+Epoch 10/30
+2188/2188 [==============================] - 19s 9ms/step - loss: 0.3870 - accuracy: 0.8348 - val_loss: 0.3521 - val_accuracy: 0.8519
+Epoch 11/30
+2180/2188 [============================>.] - ETA: 0s - loss: 0.3871 - accuracy: 0.8339Restoring model weights from the end of the best epoch: 8.
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.3870 - accuracy: 0.8338 - val_loss: 0.3525 - val_accuracy: 0.8518
+Epoch 11: early stopping
+{'accuracy': 0.8338428735733032, 'loss': 0.38703015446662903}
+3125/3125 [==============================] - 18s 6ms/step - loss: 3.7475 - accuracy: 0.5107
+Model: "model_21"
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_11 (InputLayer)       [(None, 48, 48, 1)]       0         
+                                                                 
+ model_20 (Functional)       (None, 400)               3573648   
+                                                                 
+ dropout_10 (Dropout)        (None, 400)               0         
+                                                                 
+ dense_10 (Dense)            (None, 1)                 401       
+                                                                 
+=================================================================
+Total params: 3574049 (13.63 MB)
+Trainable params: 401 (1.57 KB)
+Non-trainable params: 3573648 (13.63 MB)
+_________________________________________________________________
+Epoch 1/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4594 - accuracy: 0.7867 - val_loss: 0.4039 - val_accuracy: 0.8232
+Epoch 2/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4190 - accuracy: 0.8147 - val_loss: 0.3913 - val_accuracy: 0.8308
+Epoch 3/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4137 - accuracy: 0.8170 - val_loss: 0.3870 - val_accuracy: 0.8343
+Epoch 4/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4107 - accuracy: 0.8179 - val_loss: 0.3843 - val_accuracy: 0.8374
+Epoch 5/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4096 - accuracy: 0.8170 - val_loss: 0.3833 - val_accuracy: 0.8358
+Epoch 6/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4107 - accuracy: 0.8167 - val_loss: 0.3825 - val_accuracy: 0.8375
+Epoch 7/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4082 - accuracy: 0.8178 - val_loss: 0.3823 - val_accuracy: 0.8373
+Epoch 8/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4074 - accuracy: 0.8164 - val_loss: 0.3817 - val_accuracy: 0.8340
+Epoch 9/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4075 - accuracy: 0.8177 - val_loss: 0.3810 - val_accuracy: 0.8374
+Epoch 10/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4093 - accuracy: 0.8158 - val_loss: 0.3808 - val_accuracy: 0.8390
+Epoch 11/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4102 - accuracy: 0.8170 - val_loss: 0.3813 - val_accuracy: 0.8377
+Epoch 12/30
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4093 - accuracy: 0.8179 - val_loss: 0.3812 - val_accuracy: 0.8363
+Epoch 13/30
+2184/2188 [============================>.] - ETA: 0s - loss: 0.4096 - accuracy: 0.8154Restoring model weights from the end of the best epoch: 10.
+2188/2188 [==============================] - 18s 8ms/step - loss: 0.4095 - accuracy: 0.8155 - val_loss: 0.3814 - val_accuracy: 0.8352
+Epoch 13: early stopping
+{'accuracy': 0.8154571652412415, 'loss': 0.40947481989860535}
+3125/3125 [==============================] - 18s 6ms/step - loss: 2.1039 - accuracy: 0.5424
+{'histories_evaluate': [{'accuracy': 0.5561445951461792, 'loss': 2.343454360961914}, {'accuracy': 0.765273928642273, 'loss': 0.9969375729560852}, {'accuracy': 0.7412925958633423, 'loss': 1.6536850929260254}, {'accuracy': 0.6892098188400269, 'loss': 1.0491801500320435}, {'accuracy': 0.5983347296714783, 'loss': 1.4757448434829712}, {'accuracy': 0.5942124724388123, 'loss': 2.647082805633545}, {'accuracy': 0.623533308506012, 'loss': 1.1582294702529907}, {'accuracy': 0.5982252359390259, 'loss': 1.671897053718567}, {'accuracy': 0.4718332588672638, 'loss': 2.0029678344726562}, {'accuracy': 0.5107499957084656, 'loss': 3.747523546218872}, {'accuracy': 0.5424399971961975, 'loss': 2.1039483547210693}], 'histories_training': [{'accuracy': 0.8455733060836792, 'loss': 0.3473835587501526}, {'accuracy': 0.8244056701660156, 'loss': 0.37707075476646423}, {'accuracy': 0.8714924454689026, 'loss': 0.286653995513916}, {'accuracy': 0.8643661737442017, 'loss': 0.3073873817920685}, {'accuracy': 0.8363046050071716, 'loss': 0.3725540041923523}, {'accuracy': 0.8710896372795105, 'loss': 0.31380748748779297}, {'accuracy': 0.8433185815811157, 'loss': 0.3464279770851135}, {'accuracy': 0.8324912190437317, 'loss': 0.38373634219169617}, {'accuracy': 0.8481541872024536, 'loss': 0.3553897440433502}, {'accuracy': 0.8338428735733032, 'loss': 0.38703015446662903}, {'accuracy': 0.8154571652412415, 'loss': 0.40947481989860535}]}
+2216,175895214081
+
+
+[{'accuracy': 0.7101243138313293, 'loss': 0.8342442512512207}, {'accuracy': 0.7662853598594666, 'loss': 0.7141382098197937}, {'accuracy': 0.774816632270813, 'loss': 0.6851223707199097}, {'accuracy': 0.7345792055130005, 'loss': 0.6962125897407532}, {'accuracy': 0.7105845212936401, 'loss': 0.64031583070755}, {'accuracy': 0.7076680660247803, 'loss': 0.8780283331871033}, {'accuracy': 0.7709851264953613, 'loss': 0.49709442257881165}, {'accuracy': 0.7716547846794128, 'loss': 0.7820748686790466}, {'accuracy': 0.6557502150535583, 'loss': 0.6303220987319946}, {'accuracy': 0.5962600111961365, 'loss': 1.3651223182678223}, {'accuracy': 0.7310400009155273, 'loss': 0.4908747971057892}] 30 epochs
