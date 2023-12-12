@@ -2,6 +2,7 @@ from sigonAgent import AgentDefinition
 from sensors.DefaultSensor import DefaultSensor
 from sensors.ContractSensor import ContractSensor
 from sensors.DataSensor import DataSensor
+from actuators.SetOperation import SetOperation
 from nn_ctx import NNCtx
 from metrics_ctx import MetricsCtx
 import json
@@ -32,13 +33,16 @@ def execute():
 
     agent.run()
 
-    months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
-              '2018-10', '2018-11', '2018-12']
+    # months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+    #           '2018-10', '2018-11', '2018-12']
     
     # months = ['2018-01', '2018-02']
     
-    for month in months:
-        data_sensor.perceive(month)
+    # for month in months:
+    #     data_sensor.perceive(month)
+    actuator = SetOperation('SetOperation')
+    actuator.act(['retrain'])    
+    data_sensor.perceive('')
 
     
     print({
