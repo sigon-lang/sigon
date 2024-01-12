@@ -33,16 +33,14 @@ def execute():
 
     agent.run()
 
-    # months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
-    #           '2018-10', '2018-11', '2018-12']
+    months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+              '2018-10', '2018-11', '2018-12']
     
-    # months = ['2018-01', '2018-02']
-    
-    # for month in months:
-    #     data_sensor.perceive(month)
-    actuator = SetOperation('SetOperation')
-    actuator.act(['retrain'])    
-    data_sensor.perceive('')
+    for month in months:
+        data_sensor.perceive(month)
+    # actuator = SetOperation('SetOperation')
+    # actuator.act(['retrain'])    
+    # data_sensor.perceive('')
 
     
     print({
@@ -62,7 +60,7 @@ def main():
         start_time = time.time()
         execute()
         result = time.time() - start_time        
-        times.append(result*1000)
+        times.append(result)
 
     print(times)
 

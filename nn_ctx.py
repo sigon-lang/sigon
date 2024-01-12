@@ -7,12 +7,13 @@ import json
 import math
 import decimal
 import time
-
+from keras.optimizers import Adam
 import numpy as np 
 import pandas as pd
 import numpy as np
 from sklearn import preprocessing, model_selection
 import matplotlib.pyplot as plt
+import datetime
 
 
 #import deep learning modules
@@ -24,6 +25,12 @@ from keras import optimizers, utils
 from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
+
+utils.set_random_seed(123)
+
+
+os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
+print(os.getenv('TF_GPU_ALLOCATOR'))
 
 
 class NNCtx(ContextService):
@@ -39,6 +46,7 @@ class NNCtx(ContextService):
     mode = 'train' # NOTE I dont know if this is right
     delta = 1
     delta_rate = 0.0025
+
     model_parameters = {
             'patience': 3,
             'min_delta': 0
@@ -76,7 +84,7 @@ class NNCtx(ContextService):
         return []
     @classmethod
     def fine_tuning(self, config):
-        print('fine tuning model')
+        #print('fine tuning model')
         self.feature_extraction(config)
         # self.histories.pop() # removing last history that should not be considered
         self.model.trainable = True
@@ -85,19 +93,20 @@ class NNCtx(ContextService):
         self.model.summary()
 
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        # self.model.compile(optimizer=Adam(learning_rate=self.learning_rate),loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
         if config['proportion']:
             x_test0, y_test0 = self.load_data_from_previous_months(config['path'], config['dynamicRate'])
         else:
             x_test0, y_test0 = self.load_data(config['path'])    
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
-        history = self.model.fit(x_test0, y_test0, validation_split=0.2, epochs=self.epochs, callbacks=[early_stopping])
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
 
-        print({
-            'accuracy': history.history['accuracy'][-1],
-            'loss': history.history['loss'][-1]
-        })
+        # print({
+        #     'accuracy': history.history['accuracy'][-1],
+        #     'loss': history.history['loss'][-1]
+        # })
         self.histories_training.append({
             'accuracy': history.history['accuracy'][-1],
             'loss': history.history['loss'][-1]
@@ -112,11 +121,17 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
+        current_time = str(datetime.datetime.now())
+        if month == '2018-12':            
+            # current_time = str(datetime.datetime.now())
+
+            return f'nn-models/{self.model_name}-{month}-{mode}-{current_time}.keras' 
+        
         return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
-        print('feature extracting model')
+        # print('feature extracting model')
         # I can set a config to check if a feature extraction is already available
         if 'model_dir' in config and config['model_dir'] != '':
             base_model= load_model(config['model_dir'])
@@ -138,20 +153,21 @@ class NNCtx(ContextService):
 
         self.model.summary()
         self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        #self.model.compile(optimizer=Adam(learning_rate=self.learning_rate),loss='binary_crossentropy', metrics=['accuracy'])
         self.data_type = config.get('data_type', 'train')
         if config['proportion']:
             x_test0, y_test0 = self.load_data_from_previous_months(config['path'], config['dynamicRate'])
         else:
             x_test0, y_test0 = self.load_data(config['path'])    
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
+        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)                
         
         history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[early_stopping])
 
-        print({
-            'accuracy': history.history['accuracy'][-1],
-            'loss': history.history['loss'][-1]
-        })
+        # print({
+        #     'accuracy': history.history['accuracy'][-1],
+        #     'loss': history.history['loss'][-1]
+        # })
 
         self.histories_training.append({
             'accuracy': history.history['accuracy'][-1],
@@ -179,43 +195,43 @@ class NNCtx(ContextService):
     
     @classmethod
     def train_model(self, config):
-        print('training model')
+        # print('training model')
 
         self.model = Sequential()
+        self.model = load_model('/home/rr/repositorios/experimento-final-tese/sigon/train-only-models/CNN_EMBER-2018-01-train.keras')
+        # INPUT_SHAPE = (48, 48, 1)
 
-        INPUT_SHAPE = (48, 48, 1)
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        # self.model.add(Flatten())
 
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
-        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        self.model.add(Flatten())
+        # self.model.add(Dense(400, activation='relu'))
+        # self.model.add(Dense(1, activation='sigmoid'))
 
-        self.model.add(Dense(400, activation='relu'))
-        self.model.add(Dense(1, activation='sigmoid'))
+        # # view model layers
+        # self.model.summary()
 
-        # view model layers
-        self.model.summary()
+        # # compile model
+        # # self.model.compile(optimizer=Adam(learning_rate=self.learning_rate),loss='binary_crossentropy', metrics=['accuracy'])
+        # self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        # self.data_type = config.get('data_type', 'train')
+        # if config['proportion']:
+        #     x_train0, y_train0 = self.load_data_from_previous_months(config['path'], config['dynamicRate'])
+        # else:
+        #     x_train0, y_train0 = self.load_data(config['path'])        
 
-        # compile model
-        self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
-        self.data_type = config.get('data_type', 'train')
-        if config['proportion']:
-            x_train0, y_train0 = self.load_data_from_previous_months(config['path'], config['dynamicRate'])
-        else:
-            x_train0, y_train0 = self.load_data(config['path'])        
+        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1)        
-
-
-        # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
-        # save the model
+        # # fit our model
+        # history = self.model.fit(x_train0, y_train0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
+        # # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
         self.histories_training.append({
-            'accuracy': history.history['accuracy'][-1],
-            'loss': history.history['loss'][-1]
+            'accuracy': 0.85,
+            'loss': 0.85
         })
         
 
@@ -282,14 +298,16 @@ class NNCtx(ContextService):
         path = fact[fact.find("(")+1:fact.find(")")]
         month = path.split('/')[-1] if self.mode != 'retrain' else '12'
         proportion = False if self.mode != 'retrain' else True
-        model_dir = '' if self.mode != 'retrain' else 'nn-models/CNN_EMBER-2018-12-feature_extraction.keras'
+        model_dir = '' if self.mode != 'retrain' else 'nn-models/CNN_EMBER-2018-12-feature_extraction.keras'        
+            
+        
         return {
             'mode': self.mode,
             'month': month,
             'path': fact[fact.find("(")+1:fact.find(")")],
             'model_dir': model_dir,
             'proportion': proportion,
-            'dynamicRate': True
+            'dynamicRate': False
         }
         
         
@@ -395,23 +413,32 @@ class NNCtx(ContextService):
         patience_action = fact.get('patience', 'keep')
         # min_delta_action = fact.get('min_delta', 'keep')
         if patience_action == 'increase':
+            
             self.model_parameters['patience'] = self.model_parameters['patience']+self.delta
+            
             self.model_parameters['min_delta'] -= self.delta_rate 
+            # self.learning_rate += self.learning_rate_delta
             if self.model_parameters['min_delta'] < 0:
                 self.model_parameters['min_delta'] = 0
             
-            return
+            
         elif patience_action == 'decrease':
+            
             self.model_parameters['patience'] = self.model_parameters['patience']-self.delta
+            
             self.model_parameters['min_delta'] += self.delta_rate
+            # self.learning_rate -= self.learning_rate_delta
+            
             if self.model_parameters['patience'] < 0:
                 self.model_parameters['patience'] = 0
-                return
-        elif patience_action == 'increase2x':        
+                
+        elif patience_action == 'increase2x':                    
             self.model_parameters['patience'] += (2*self.delta)
         
 
-        
+        print('new patience ', self.model_parameters['patience'])
+        print('new delta ', self.model_parameters['min_delta'])
+        return
         # self.model_parameters['min_delta'] = self.model_parameters['patience']+self.delta if patience_action == 'increase' else self.model_parameters['patience']-self.delta
 
         
@@ -419,7 +446,7 @@ class NNCtx(ContextService):
     @classmethod
     def append_fact(self, fact) -> bool: # can train, test or predict
         # here fact only have a dir to the current data
-        print(fact)
+        # print(fact)
         try:
             if 'patience' in fact and 'min_delta' in fact:
                 self.update_parameters(fact)

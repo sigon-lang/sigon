@@ -36,15 +36,18 @@ class MetricsCtx(ContextService):
             return {
                 'low': {
                     'patience': 'increase2x',
-                    'min_delta': 'decrease'
+                    'min_delta': 'decrease',
+                    'learning_rate': 'increase2x'
                 },
                 'medium': {
                     'patience': 'increase',
-                    'min_delta': 'keep'
+                    'min_delta': 'keep',
+                    'learning_rate': 'increase'
                 },
                 'high': {
                     'patience': 'decrease',
-                    'min_delta': 'increase'
+                    'min_delta': 'increase',
+                    'learning_rate': 'decrease'
                 }
             }.get(performance_value[0].get('X', 'medium'))
             
