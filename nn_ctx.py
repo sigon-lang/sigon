@@ -45,7 +45,7 @@ class NNCtx(ContextService):
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
     delta = 1
-    delta_rate = 0.0025
+    delta_rate = 0.0020
 
     model_parameters = {
             'patience': 3,
@@ -415,18 +415,24 @@ class NNCtx(ContextService):
         if patience_action == 'increase':
             
             self.model_parameters['patience'] = self.model_parameters['patience']+self.delta
+            if self.model_parameters['patience'] > 8:
+                self.model_parameters['patience'] = 8
             
-            self.model_parameters['min_delta'] -= self.delta_rate 
-            # self.learning_rate += self.learning_rate_delta
-            if self.model_parameters['min_delta'] < 0:
-                self.model_parameters['min_delta'] = 0
+            
+            # self.model_parameters['min_delta'] -= self.delta_rate 
+            # # self.learning_rate += self.learning_rate_delta
+            # if self.model_parameters['min_delta'] < 0:
+            #     self.model_parameters['min_delta'] = 0
             
             
         elif patience_action == 'decrease':
             
-            self.model_parameters['patience'] = self.model_parameters['patience']-self.delta
+            self.model_parameters['patience'] = self.model_parameters['patience']-(2*self.delta)
             
-            self.model_parameters['min_delta'] += self.delta_rate
+            if self.model_parameters['patience'] < 0:
+                self.model_parameters['patience'] = 0
+            
+            # self.model_parameters['min_delta'] += self.delta_rate
             # self.learning_rate -= self.learning_rate_delta
             
             if self.model_parameters['patience'] < 0:

@@ -112,19 +112,33 @@ if __name__ == '__main__':
     months = ['2018-01','2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
               '2018-10', '2018-11', '2018-12']
     
-   
-    
-    
-    for month in months:
-    
-        args = parser.parse_args()
-        model_name = args.model_name 
-        args = argparse.Namespace(x_test="X_test.dat", y_test= "y_test.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month, model_name="nn-models/CNN_EMBER-2018-12-fine_tuning-2024-01-15 12:56:06.814961.keras")
-        
-        # -set default-values for certain arguments based on chosen scenario & experiment
-        # -run experiment
-        run(args)
+    # [1458.7331094741821, 973.5511906147003, 1272.6276421546936, 1261.9042592048645, 1303.5685386657715, 1417.5619714260101, 1314.639189004898, 1342.0428295135498, 1540.7153720855713, 1250.1737926006317]
 
-    print(histories)
+    dir = 'nn-models/sigon_segunda_agora_vaio'
+    files = os.listdir(dir)
+    
+    histories_execution = {}
+    
+    for idx,file in enumerate(files):
+        
+        histories = []
+        
+    
+        for month in months:
+        
+            args = parser.parse_args()
+            model_name = args.model_name 
+            
+            args = argparse.Namespace(x_test="X_test.dat", y_test= "y_test.dat",d_dir='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month, model_name=os.path.join(dir, file))
+            
+            # -set default-values for certain arguments based on chosen scenario & experiment
+            # -run experiment
+            run(args)
+
+        print(histories)
+        histories_execution[idx] = histories
+    
+    print(dir)
+    print(histories_execution)
     
     

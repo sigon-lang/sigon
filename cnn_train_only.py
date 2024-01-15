@@ -25,6 +25,9 @@ from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
 
+import datetime
+
+
 os.environ['TF_GPU_ALLOCATOR'] = 'cuda_malloc_async'
 print(os.getenv('TF_GPU_ALLOCATOR'))
 
@@ -36,12 +39,13 @@ class NNCtx(ContextService):
     histories_evaluate = [] # contains information about previous training
     histories_training = [] # contains information about previous training
     data_type = 'train' # test or predict    
-    epochs = 10
-    feature_extraction_epochs = 15
+    epochs = 30
+    feature_extraction_epochs = 30
     model_name = "CNN_EMBER"
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
     delta = 1
+    delta_rate = 0.0025
     model_parameters = {
             'patience': 3,
             'min_delta': 0
@@ -90,7 +94,7 @@ class NNCtx(ContextService):
         x_test0, y_test0 = self.load_data(config['path'])
 
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[])
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -110,7 +114,13 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'train-only-models/{self.model_name}-{month}-{mode}.keras' 
+        current_time = str(datetime.datetime.now())
+        if month == '2018-12':            
+            # current_time = str(datetime.datetime.now())
+
+            return f'nn-models/{self.model_name}-{month}-{mode}-{current_time}.keras' 
+        
+        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
@@ -140,7 +150,7 @@ class NNCtx(ContextService):
 
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
         
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[])
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -176,7 +186,8 @@ class NNCtx(ContextService):
 
         self.model = Sequential()
 
-        INPUT_SHAPE = (48, 48, 1)
+        INPUT_SHAPE = (48, 48, 1)       
+        
 
         self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
         self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
@@ -200,7 +211,7 @@ class NNCtx(ContextService):
 
 
         # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[])
+        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[early_stopping])
         # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
         self.histories_training.append({
@@ -395,47 +406,56 @@ class NNCtx(ContextService):
 # # OK
 # # NNCtx.train_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01') 
 
-NNCtx.data_type = 'train'
 
-# NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
+def execute():
+
+    NNCtx.data_type = 'train'
+
+    # NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
-months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+    
+    
+    months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
               '2018-10', '2018-11', '2018-12']
-    
-start_time = time.time()
         
+           
+            
         
+    for month in months:
+            config = {
+                'mode': 'train',
+                'month': month,
+                'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
+                'model_dir': ''
+            }
+            print(month)
+            NNCtx.train_model(config)
+            # NNCtx.test_model(config)
+
         
+    print({
+            'histories_evaluate': NNCtx.histories_evaluate,
+            'histories_training': NNCtx.histories_training
+        })
     
-for month in months:
-        config = {
-            'mode': 'train',
-            'month': month,
-            'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
-            'model_dir': ''
-        }
-        print(month)
-        NNCtx.train_model(config)
-        # NNCtx.test_model(config)
-
-    
-print({
-        'histories_evaluate': NNCtx.histories_evaluate,
-        'histories_training': NNCtx.histories_training
-    })
-
-
-result = time.time() - start_time    
-
-print(result)
             
 
+def main():
+    execute()   
+    # number_executions = 1
+    # times = []
 
-# OK
-# NNCtx.fine_tuning(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
+    # for i in range(number_executions):
+    #     start_time = time.time()
+        
+    #     result = time.time() - start_time      
+    #     print(result)  
+    #     times.append(result)
+
+    # print(times)
 
 
-# NNCtx.data_type = 'test'
+if __name__ == "__main__":
+    main()
 
-# NNCtx.test_model(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02') 

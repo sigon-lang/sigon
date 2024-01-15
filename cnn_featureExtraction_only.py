@@ -24,8 +24,8 @@ from keras import optimizers, utils
 from keras.callbacks import EarlyStopping
 import multiprocessing
 import os
+import datetime
 
-utils.set_random_seed(123)
 
 class NNCtx(ContextService):
 
@@ -107,7 +107,14 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'feature-only-models/{self.model_name}-{month}-{mode}.keras' 
+        current_time = str(datetime.datetime.now())
+        if month == '2018-12':            
+            # current_time = str(datetime.datetime.now())
+
+            return f'nn-models/{self.model_name}-{month}-{mode}-{current_time}.keras' 
+        
+        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
+
 
     @classmethod
     def feature_extraction(self, config):
@@ -397,10 +404,18 @@ NNCtx.data_type = 'train'
 # NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
+
+
 months = ['2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
               '2018-10', '2018-11', '2018-12']
-    
-start_time = time.time()
+
+config = {
+            'mode': 'featureExtraction',
+            'month': '2018-01',
+            'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+'2018-01',
+            'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras'
+        }
+NNCtx.feature_extraction(config)  
         
         
         
@@ -410,7 +425,7 @@ for month in months:
             'mode': 'featureExtraction',
             'month': month,
             'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
-            'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras'
+            'model_dir': ''
         }
         NNCtx.feature_extraction(config)
         # NNCtx.test_model(config)
@@ -422,9 +437,7 @@ print({
     })
 
 
-result = time.time() - start_time    
 
-print(result)
             
 
 

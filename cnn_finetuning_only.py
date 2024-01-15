@@ -13,6 +13,7 @@ import pandas as pd
 import numpy as np
 from sklearn import preprocessing, model_selection
 import matplotlib.pyplot as plt
+import datetime
 
 
 #import deep learning modules
@@ -37,8 +38,8 @@ class NNCtx(ContextService):
     histories_evaluate = [] # contains information about previous training
     histories_training = [] # contains information about previous training
     data_type = 'train' # test or predict    
-    epochs = 10
-    feature_extraction_epochs = 15
+    epochs = 30
+    feature_extraction_epochs = 30
     model_name = "CNN_EMBER"
     feature_extraction_model = None
     mode = 'train' # NOTE I dont know if this is right
@@ -95,7 +96,7 @@ class NNCtx(ContextService):
             x_test0, y_test0 = self.load_data(config['path'])
 
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[])
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -115,7 +116,13 @@ class NNCtx(ContextService):
     
     @classmethod
     def format_model_name(self, month, mode):
-        return f'finetuning-only-models/{self.model_name}-{month}-{mode}.keras' 
+        current_time = str(datetime.datetime.now())
+        if month == '2018-12':            
+            # current_time = str(datetime.datetime.now())
+
+            return f'nn-models/{self.model_name}-{month}-{mode}-{current_time}.keras' 
+        
+        return f'nn-models/{self.model_name}-{month}-{mode}.keras' 
 
     @classmethod
     def feature_extraction(self, config):
@@ -149,7 +156,7 @@ class NNCtx(ContextService):
             x_test0, y_test0 = self.load_data(config['path'])
         early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
         
-        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[])
+        history = self.model.fit(x_test0, y_test0, validation_split=0.3, epochs=self.feature_extraction_epochs, callbacks=[early_stopping])
 
         print({
             'accuracy': history.history['accuracy'][-1],
@@ -184,38 +191,42 @@ class NNCtx(ContextService):
     def train_model(self, config):
 
         self.model = Sequential()
+        self.model = load_model('/home/rr/repositorios/experimento-final-tese/sigon/train-only-models/CNN_EMBER-2018-01-train.keras')
 
-        INPUT_SHAPE = (48, 48, 1)
+        # INPUT_SHAPE = (48, 48, 1)
 
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
-        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
-        self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
-        self.model.add(Flatten())
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3),  activation='relu', input_shape=INPUT_SHAPE))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        # self.model.add(MaxPooling2D(pool_size=(2, 2), padding='valid'))
+        # self.model.add(Conv2D(filters=128, kernel_size=(3,3), activation='relu'))
+        # self.model.add(Flatten())
 
-        self.model.add(Dense(400, activation='relu'))
-        self.model.add(Dense(1, activation='sigmoid'))
+        # self.model.add(Dense(400, activation='relu'))
+        # self.model.add(Dense(1, activation='sigmoid'))
 
-        # view model layers
-        self.model.summary()
+        # # view model layers
+        # self.model.summary()
 
-        # compile model
-        self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
-        self.data_type = config.get('data_type', 'train')
-        x_train0, y_train0 = self.load_data(config['path'])
+        # # compile model
+        # self.model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+        # self.data_type = config.get('data_type', 'train')
+        # if config['proportion']:
+        #     x_train0, y_train0 = self.load_data_previous_months(config['path'])
+        # else:
+        #     x_train0, y_train0 = self.load_data(config['path'])
 
-        early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
+        # early_stopping = EarlyStopping(monitor='val_loss', min_delta=self.model_parameters['min_delta'] ,patience=self.model_parameters['patience'], verbose=1, restore_best_weights=True)        
 
 
-        # fit our model
-        history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[])
-        # save the model
+        # # fit our model
+        # history = self.model.fit(x_train0, y_train0, validation_split=0.2, epochs=self.epochs, callbacks=[early_stopping])
+        # # save the model
         self.model.save(self.format_model_name(config['month'], 'train'), overwrite=True)
-        self.histories_training.append({
-            'accuracy': history.history['accuracy'][-1],
-            'loss': history.history['loss'][-1]
-        })
+        # self.histories_training.append({
+        #     'accuracy': history.history['accuracy'][-1],
+        #     'loss': history.history['loss'][-1]
+        # })
         
 
     @classmethod
@@ -276,16 +287,17 @@ class NNCtx(ContextService):
     def load_data_previous_months(self, path):
         
         months = ['2018-01','2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
-              '2018-10', '2018-11']
+              '2018-10', '2018-11', '2018-12']
         x_dat = 'X_' + self.data_type + '.dat'
         y_dat = 'y_' + self.data_type + '.dat'
-        current_moth = 12
         compiled_x_data = []
+        last_month = 12
         compiled_y_data = []
         for m in months:
             previous_month = int(m.split('-')[1])
             # rate = (current_moth - previous_month)*0.027
-            rate = 0.3
+            rate = (last_month - previous_month)*0.02727 if (last_month - previous_month > 0) else 0.3    
+            
             
             
         
@@ -492,10 +504,40 @@ NNCtx.data_type = 'train'
 # NNCtx.feature_extraction(path='/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-02', model_dir='/home/rr/repositorios/experimento-final-tese/sigon/CNN_EMBER.h5')
 
 
-months = ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
+months = ['2018-02','2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09',
               '2018-10', '2018-11', '2018-12']
+
+
+# months = ['2018-01']
+
+config = {
+        'mode': 'train',
+                'month': '2018-01',
+                'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01',
+                'model_dir': '',
+                'proportion': False
+        }
+
+
+        
+NNCtx.train_model(config)
+
+
     
-start_time = time.time()
+# start_time = time.time()
+for m in months:
+
+    config = {
+            'mode': 'fineTuning',
+                    'month': m,
+                    'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+m,
+                    'model_dir': '',
+                    'proportion': False
+            }
+
+
+            
+    NNCtx.fine_tuning(config)
 
 
 
@@ -503,18 +545,13 @@ start_time = time.time()
 #            'mode': 'fineTuning',
 #                 'month': '2018-12',
 #                 'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/',
-#                 'model_dir': 'nn-models/CNN_EMBER-2018-12-feature_extraction.keras',
+#                 'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras',
 #                 'proportion': True
 # }
-# start_time = time.time()
 
 
         
 # NNCtx.fine_tuning(config)
-
-# result = time.time() - start_time
-# print(result)
-
 
 
 # if i train final network with proportion from previous months, whats the result?
@@ -548,27 +585,27 @@ start_time = time.time()
         
         
     
-for month in months:
-        config = {
-            'mode': 'fineTuning',
-            'month': month,
-            'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
-            'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras',
-            'proportion': False
-        }
-        NNCtx.fine_tuning(config)
-        # NNCtx.test_model(config)
+# for month in months:
+#         config = {
+#             'mode': 'fineTuning',
+#             'month': month,
+#             'path': '/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/'+month,
+#             'model_dir': 'train-only-models/CNN_EMBER-2018-01-train.keras',
+#             'proportion': False
+#         }
+#         NNCtx.fine_tuning(config)
+#         # NNCtx.test_model(config)
 
     
-print({
-        'histories_evaluate': NNCtx.histories_evaluate,
-        'histories_training': NNCtx.histories_training
-    })
+# print({
+#         'histories_evaluate': NNCtx.histories_evaluate,
+#         'histories_training': NNCtx.histories_training
+#     })
 
 
-result = time.time() - start_time    
+# result = time.time() - start_time    
 
-print(result)
+# print(result)
             
 
 # NNCtx.data_path.append('/home/rr/repositorios/experimento-final-tese/continual-learning-malware/ember2018/month_based_processing_with_family_labels/2018-01')
